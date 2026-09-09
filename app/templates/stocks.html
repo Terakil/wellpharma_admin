@@ -689,12 +689,11 @@ Stocks - WellPharma
 
             </div>
 
-            <button
-                class="see-all"
-                type="button"
-            >
+            {% if alerts|length > 5 %}
+            <button class="see-all" id="showAllAlerts" type="button">
                 Voir tout →
             </button>
+            {% endif %}
 
         </div>
 
@@ -703,7 +702,7 @@ Stocks - WellPharma
 
             {% for alert in alerts %}
 
-            <div class="alert-item">
+            <div class="alert-item"{% if loop.index > 5 %} style="display: none;"{% endif %}>
 
                 <div class="alert-icon">
 
@@ -753,12 +752,11 @@ Stocks - WellPharma
 
             </div>
 
-            <button
-                class="see-all"
-                type="button"
-            >
+            {% if recent_movements|length > 5 %}
+            <button class="see-all" id="showAllMovements" type="button">
                 Voir tout →
             </button>
+            {% endif %}
 
         </div>
 
@@ -767,7 +765,7 @@ Stocks - WellPharma
 
             {% for movement in recent_movements %}
 
-            <div class="recent-item">
+            <div class="recent-item"{% if loop.index > 5 %} style="display: none;"{% endif %}>
 
                 <div
                     class="recent-icon

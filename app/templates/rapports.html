@@ -245,6 +245,12 @@
             Réinitialiser
         </button>
 
+        {% if reports|length > 5 %}
+        <button type="button" class="reset-btn list-toggle" data-list-target="reportTableBody" data-item-selector=".report-row">
+            Voir tout →
+        </button>
+        {% endif %}
+
     </div>
 
 </div>
@@ -314,7 +320,7 @@
         </thead>
 
 
-        <tbody id="reportTableBody">
+        <tbody id="reportTableBody" data-limit-list="true">
 
             {% for report in reports %}
 

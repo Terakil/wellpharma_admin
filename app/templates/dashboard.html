@@ -191,7 +191,7 @@
         Dernières commandes
       </h5>
 
-      <a href="#" class="view-all"> Voir tout </a>
+      <a href="{{ url_for('commandes.liste_commandes') }}" class="view-all"> Voir tout </a>
     </div>
 
     <div class="table-responsive">
@@ -247,7 +247,7 @@
         Top 5 médicaments les plus vendus
       </h5>
 
-      <a href="#" class="view-all"> Voir tout </a>
+      <a href="{{ url_for('medicaments.liste_medicaments') }}" class="view-all"> Voir tout </a>
     </div>
 
     <div class="top-medicaments-list">
@@ -306,7 +306,7 @@
         Notifications
       </h5>
 
-      <a href="#" class="view-all"> Voir tout </a>
+      <a href="{{ url_for('stocks.liste_stocks') }}" class="view-all"> Voir tout </a>
     </div>
 
     <ul>

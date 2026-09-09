@@ -46,6 +46,12 @@ Médicaments - WellPharma
 
         </div>
 
+        {% if medicines|length > 5 %}
+        <button type="button" class="see-all list-toggle" data-list-target="medicineTableBody" data-item-selector=".medicine-row">
+            Voir tout →
+        </button>
+        {% endif %}
+
     </div>
 
 
@@ -375,7 +381,7 @@ Médicaments - WellPharma
 
             <!-- CORPS -->
 
-            <tbody id="medicineTableBody">
+            <tbody id="medicineTableBody" data-limit-list="true">
 
 
                 {% if medicines %}

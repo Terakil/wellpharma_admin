@@ -228,6 +228,12 @@
 
     </button>
 
+    {% if suppliers|length > 5 %}
+    <button type="button" class="reset-btn list-toggle" data-list-target="supplierTableBody" data-item-selector=".supplier-row">
+        Voir tout →
+    </button>
+    {% endif %}
+
 </div>
 
 
@@ -264,7 +270,7 @@
         </thead>
 
 
-        <tbody id="supplierTableBody">
+        <tbody id="supplierTableBody" data-limit-list="true">
 
             {% for supplier in suppliers %}
 

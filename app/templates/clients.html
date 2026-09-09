@@ -139,8 +139,10 @@ Clients - WellPharma
 
     <button
         type="button"
-        class="view-all-btn"
+        class="view-all-btn list-toggle"
         id="viewAllClients"
+        data-list-target="clientTableBody"
+        data-item-selector=".client-row"
     >
         Voir tout
         <i class="bi bi-arrow-right"></i>
@@ -165,7 +167,7 @@ Clients - WellPharma
             </tr>
         </thead>
 
-        <tbody id="clientTableBody">
+        <tbody id="clientTableBody" data-limit-list="true">
 
             {% for client in clients %}
 

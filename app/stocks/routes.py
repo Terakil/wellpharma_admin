@@ -97,7 +97,6 @@ def liste_stocks():
             "timestamp": movement.date or datetime.min
         })
     recent_movements.sort(key=lambda item: item["timestamp"], reverse=True)
-    recent_movements = recent_movements[:5]
     for movement in recent_movements:
         movement.pop("timestamp", None)
 
@@ -113,7 +112,7 @@ def liste_stocks():
         "stocks.html",
         stats=stats,
         stocks=stocks_data,
-        alerts=alerts[:5],
+        alerts=alerts,
         recent_movements=recent_movements,
         movements=movements,
         medicines=medicines

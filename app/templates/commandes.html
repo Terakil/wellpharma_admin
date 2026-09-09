@@ -159,6 +159,12 @@ Commandes - WellPharma
         Réinitialiser
     </button>
 
+    {% if orders|length > 5 %}
+    <button type="button" class="btn-view-all list-toggle" data-list-target="orderTableBody" data-item-selector=".order-row">
+        Voir tout →
+    </button>
+    {% endif %}
+
 </div>
 
 
@@ -180,7 +186,7 @@ Commandes - WellPharma
         </thead>
 
 
-        <tbody id="orderTableBody">
+        <tbody id="orderTableBody" data-limit-list="true">
 
             {% for order in orders %}
             <tr

@@ -1,5 +1,32 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    document.querySelectorAll(".list-toggle").forEach(function (button) {
+        const target = document.getElementById(button.dataset.listTarget);
+        if (!target) {
+            return;
+        }
+
+        const selector = button.dataset.itemSelector || "tr";
+        const items = Array.from(target.querySelectorAll(selector));
+        if (items.length <= 5) {
+            button.style.display = "none";
+            return;
+        }
+
+        items.slice(5).forEach(function (item) {
+            item.classList.add("list-item-hidden");
+        });
+
+        button.addEventListener("click", function () {
+            const expanded = button.dataset.expanded === "true";
+            items.slice(5).forEach(function (item) {
+                item.classList.toggle("list-item-hidden", expanded);
+            });
+            button.dataset.expanded = String(!expanded);
+            button.textContent = expanded ? "Voir tout →" : "Voir moins ↑";
+        });
+    });
+
     /* =====================================================
        DATE
     ===================================================== */

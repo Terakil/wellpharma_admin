@@ -1,5 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    const showAllAlerts = document.getElementById("showAllAlerts");
+    const showAllMovements = document.getElementById("showAllMovements");
+
+    if (showAllAlerts) {
+        showAllAlerts.addEventListener("click", function () {
+            toggleList(showAllAlerts, ".alert-list", ".alert-item");
+        });
+    }
+
+    if (showAllMovements) {
+        showAllMovements.addEventListener("click", function () {
+            toggleList(showAllMovements, ".recent-list", ".recent-item");
+        });
+    }
+
+    function toggleList(button, containerSelector, itemSelector) {
+        const container = document.querySelector(containerSelector);
+        if (!container) {
+            return;
+        }
+
+        const items = Array.from(container.querySelectorAll(itemSelector));
+        const expanded = button.dataset.expanded === "true";
+        items.forEach(function (item, index) {
+            item.style.display = !expanded && index >= 5 ? "" : index >= 5 ? "none" : "";
+        });
+        button.dataset.expanded = String(!expanded);
+        button.textContent = expanded ? "Voir tout →" : "Voir moins ↑";
+    }
+
     /* =====================================================
        GRAPHIQUE DES MOUVEMENTS
     ===================================================== */
