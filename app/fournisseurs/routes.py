@@ -9,7 +9,7 @@ from flask import (
 from datetime import date, datetime
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.models import db, Supplier
+from app.models import Fournisseur, db
 
 
 fournisseurs = Blueprint("fournisseurs", __name__)
@@ -32,7 +32,8 @@ def display_date(value):
 @fournisseurs.route("/fournisseurs")
 def liste_fournisseurs():
     try:
-        suppliers_db = Supplier.query.order_by(Supplier.id.desc()).all()
+        db.session.expire_all()
+        suppliers_db = Fournisseur.query.populate_existing().order_by(Fournisseur.id.desc()).all()
     except SQLAlchemyError:
         db.session.rollback()
         flash("Impossible de lire la table fournisseurs. Vérifiez la connexion à la base.", "danger")
@@ -58,7 +59,7 @@ def liste_fournisseurs():
             "last_order": display_date(supplier.last_order),
             "arrival_date": display_date(supplier.arrival_date),
             "delivery_delay": supplier.delivery_delay or 0,
-            "amount": supplier.amount or 0,
+            "amount": supplier.montant or 0,
             "status": status
         })
 
@@ -80,7 +81,17 @@ def liste_fournisseurs():
                 "delivery_delay": supplier["delivery_delay"]
             })
 
-    return render_template("fournisseurs.html", suppliers=suppliers, stats=stats, upcoming_suppliers=upcoming_suppliers)
+    response = render_template(
+        "fournisseurs.html",
+        suppliers=suppliers,
+        stats=stats,
+        upcoming_suppliers=upcoming_suppliers
+    )
+    from flask import make_response
+    page = make_response(response)
+    page.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    page.headers["Pragma"] = "no-cache"
+    return page
 
 
 @fournisseurs.route("/fournisseurs/ajouter", methods=["POST"])
@@ -95,7 +106,7 @@ def ajouter_fournisseur():
     delivery_delay = request.form.get("delivery_delay", 0)
     amount = request.form.get("amount", 0)
 
-    if not name or not city or not contact or not phone:
+    if not name or not city or not contact:
         flash("Veuillez remplir tous les champs obligatoires.", "danger")
         return redirect(url_for("fournisseurs.liste_fournisseurs"))
 
@@ -111,21 +122,22 @@ def ajouter_fournisseur():
         flash("Les dates, le délai et le montant doivent être valides.", "danger")
         return redirect(url_for("fournisseurs.liste_fournisseurs"))
 
-    new_supplier = Supplier(
+    new_supplier = Fournisseur(
         nom=name[:50],
         ville=city[:50],
-        personne_contact=contact[:50],
+        personneContact=contact[:50],
         tel=phone[:15] or None,
-        medicament_fourni=medicines[:50],
-        last_command=last_order,
-        date_arrive=arrival_date,
-        delai_livraison=delivery_delay,
+        MedicamentFourni=medicines[:50],
+        LastCommand=last_order,
+        DateArrive=arrival_date,
+        delaiLivraison=delivery_delay,
         montant=amount,
     )
 
     try:
         db.session.add(new_supplier)
         db.session.commit()
+        db.session.expire_all()
     except SQLAlchemyError:
         db.session.rollback()
         flash("Le fournisseur n'a pas pu être enregistré dans la base.", "danger")

@@ -147,12 +147,12 @@ class Fournisseur(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(50), nullable=False)
     ville = db.Column(db.String(50), nullable=False)
-    personne_contact = db.Column("personneContact", db.String(50), nullable=False)
+    personneContact = db.Column(db.String(50), nullable=False)
     tel = db.Column(db.String(15))
-    last_command = db.Column("LastCommand", db.Date, nullable=False)
-    date_arrive = db.Column("DateArrive", db.Date, nullable=False)
-    medicament_fourni = db.Column("MedicamentFourni", db.String(50), nullable=False)
-    delai_livraison = db.Column(db.Integer, nullable=False)
+    LastCommand = db.Column(db.Date, nullable=False)
+    DateArrive = db.Column(db.Date, nullable=False)
+    MedicamentFourni = db.Column(db.String(50), nullable=False)
+    delaiLivraison = db.Column(db.Integer, nullable=False)
     montant = db.Column(db.Integer, nullable=False)
 
     @property
@@ -165,7 +165,7 @@ class Fournisseur(db.Model):
 
     @property
     def contact(self):
-        return self.personne_contact
+        return self.personneContact
 
     @property
     def phone(self):
@@ -173,19 +173,19 @@ class Fournisseur(db.Model):
 
     @property
     def last_order(self):
-        return self.last_command
+        return self.LastCommand
 
     @property
     def arrival_date(self):
-        return self.date_arrive
+        return self.DateArrive
 
     @property
     def medicines(self):
-        return self.medicament_fourni
+        return self.MedicamentFourni
 
     @property
     def delivery_delay(self):
-        return self.delai_livraison
+        return self.delaiLivraison
 
 
 class MouvementStock(db.Model):
