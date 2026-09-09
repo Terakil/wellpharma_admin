@@ -1,0 +1,696 @@
+{% extends "base.html" %}
+
+{% block title %}
+Commandes - WellPharma
+{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/commandes.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     HEADER DE LA PAGE
+========================================================= -->
+
+<div class="page-header">
+    <div>
+        <h2>
+            <i class="bi bi-cart3"></i>
+            Commandes
+        </h2>
+        <p>Gestion et suivi des commandes</p>
+    </div>
+
+
+<button
+    type="button"
+    class="add-order-btn"
+    data-bs-toggle="modal"
+    data-bs-target="#addOrderModal"
+>
+    <i class="bi bi-plus-lg"></i>
+    Nouvelle commande
+</button>
+
+
+</div>
+
+<!-- =========================================================
+     STATISTIQUES
+========================================================= -->
+
+<div class="order-summary">
+
+
+<div class="order-summary-card">
+    <div class="summary-icon">
+        <i class="bi bi-cart-check"></i>
+    </div>
+
+    <div>
+        <span>Commandes aujourd'hui</span>
+        <strong id="todayOrders">{{ order_stats.today }}</strong>
+    </div>
+</div>
+
+
+<div class="order-summary-card">
+    <div class="summary-icon">
+        <i class="bi bi-hourglass-split"></i>
+    </div>
+
+    <div>
+        <span>En attente</span>
+        <strong id="pendingOrders">{{ order_stats.pending }}</strong>
+    </div>
+</div>
+
+
+<div class="order-summary-card">
+    <div class="summary-icon">
+        <i class="bi bi-check-circle"></i>
+    </div>
+
+    <div>
+        <span>Commandes payées</span>
+        <strong id="paidOrders">{{ order_stats.paid }}</strong>
+    </div>
+</div>
+
+
+<div class="order-summary-card">
+    <div class="summary-icon danger">
+        <i class="bi bi-x-circle"></i>
+    </div>
+
+    <div>
+        <span>Annulées</span>
+        <strong id="cancelledOrders">{{ order_stats.cancelled }}</strong>
+    </div>
+</div>
+
+
+</div>
+
+<!-- =========================================================
+     FILTRES
+========================================================= -->
+
+<div class="order-toolbar">
+
+
+<div class="search-box">
+    <i class="bi bi-search"></i>
+
+    <input
+        type="text"
+        id="orderSearch"
+        placeholder="Rechercher une commande..."
+        autocomplete="off"
+    >
+</div>
+
+
+<select id="statusFilter" class="filter-select">
+    <option value="">Tous les statuts</option>
+    <option value="payée">Payée</option>
+    <option value="en attente">En attente</option>
+    <option value="annulée">Annulée</option>
+</select>
+
+
+<select id="dateFilter" class="filter-select">
+    <option value="">Toutes les dates</option>
+    <option value="today">Aujourd'hui</option>
+    <option value="week">Cette semaine</option>
+    <option value="month">Ce mois</option>
+</select>
+
+
+</div>
+
+<!-- =========================================================
+     TABLEAU DES COMMANDES
+========================================================= -->
+
+<div class="order-table-box">
+
+
+<div class="table-header">
+
+    <div>
+        <h5>
+            <i class="bi bi-list-ul"></i>
+            Liste des commandes
+        </h5>
+
+        <span id="orderCount">{{ orders|length }} commande(s)</span>
+    </div>
+
+    <button
+        type="button"
+        class="btn-view-all"
+        id="resetFilters"
+    >
+        <i class="bi bi-arrow-clockwise"></i>
+        Réinitialiser
+    </button>
+
+</div>
+
+
+<div class="table-responsive">
+
+    <table class="order-table">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Articles</th>
+                <th>Montant</th>
+                <th>Paiement</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+
+        <tbody id="orderTableBody">
+
+            {% for order in orders %}
+            <tr
+                class="order-row"
+                data-client="{{ order.client|lower }}"
+                data-status="{{ order.status|lower }}"
+                data-date="{{ order.date }}"
+            >
+                <td>#{{ order.id }}</td>
+                <td><strong>{{ order.client }}</strong></td>
+                <td>{{ order.date }}</td>
+                <td>{{ order.quantite }}</td>
+                <td>{{ "{:,.0f}".format(order.total).replace(",", " ") }} Ar</td>
+                <td><span class="payment-badge">Commande</span></td>
+                <td>
+                    <span class="status-badge paid">
+                        <i class="bi bi-check-circle"></i>
+                        {{ order.status }}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button type="button" class="action-btn view" title="Voir">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% if false %}
+
+            <!-- COMMANDE 1 -->
+
+            <tr
+                class="order-row"
+                data-client="jean rakoto"
+                data-status="payée"
+                data-date="today"
+            >
+                <td>#1001</td>
+
+                <td>
+                    <strong>Jean Rakoto</strong>
+                </td>
+
+                <td>15/08/2026</td>
+
+                <td>3</td>
+
+                <td>78 000 Ar</td>
+
+                <td>
+                    <span class="payment-badge">
+                        Mobile Money
+                    </span>
+                </td>
+
+                <td>
+                    <span class="status-badge paid">
+                        <i class="bi bi-check-circle"></i>
+                        Payée
+                    </span>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="Voir"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Supprimer"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+
+
+            <!-- COMMANDE 2 -->
+
+            <tr
+                class="order-row"
+                data-client="marie rabe"
+                data-status="en attente"
+                data-date="today"
+            >
+                <td>#1002</td>
+
+                <td>
+                    <strong>Marie Rabe</strong>
+                </td>
+
+                <td>15/08/2026</td>
+
+                <td>2</td>
+
+                <td>43 000 Ar</td>
+
+                <td>
+                    <span class="payment-badge">
+                        En attente
+                    </span>
+                </td>
+
+                <td>
+                    <span class="status-badge pending">
+                        <i class="bi bi-clock"></i>
+                        En attente
+                    </span>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="Voir"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Supprimer"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+
+
+            <!-- COMMANDE 3 -->
+
+            <tr
+                class="order-row"
+                data-client="paul ranaivo"
+                data-status="payée"
+                data-date="today"
+            >
+                <td>#1003</td>
+
+                <td>
+                    <strong>Paul Ranaivo</strong>
+                </td>
+
+                <td>15/08/2026</td>
+
+                <td>5</td>
+
+                <td>123 000 Ar</td>
+
+                <td>
+                    <span class="payment-badge">
+                        Carte bancaire
+                    </span>
+                </td>
+
+                <td>
+                    <span class="status-badge paid">
+                        <i class="bi bi-check-circle"></i>
+                        Payée
+                    </span>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="Voir"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Supprimer"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+
+
+            <!-- COMMANDE 4 -->
+
+            <tr
+                class="order-row"
+                data-client="sarah raja"
+                data-status="annulée"
+                data-date="week"
+            >
+                <td>#1004</td>
+
+                <td>
+                    <strong>Sarah Raja</strong>
+                </td>
+
+                <td>14/08/2026</td>
+
+                <td>1</td>
+
+                <td>25 000 Ar</td>
+
+                <td>
+                    <span class="payment-badge">
+                        Mobile Money
+                    </span>
+                </td>
+
+                <td>
+                    <span class="status-badge cancelled">
+                        <i class="bi bi-x-circle"></i>
+                        Annulée
+                    </span>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="Voir"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Supprimer"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+
+
+            <!-- COMMANDE 5 -->
+
+            <tr
+                class="order-row"
+                data-client="luc ravel"
+                data-status="payée"
+                data-date="week"
+            >
+                <td>#1005</td>
+
+                <td>
+                    <strong>Luc Ravel</strong>
+                </td>
+
+                <td>13/08/2026</td>
+
+                <td>4</td>
+
+                <td>96 000 Ar</td>
+
+                <td>
+                    <span class="payment-badge">
+                        Mobile Money
+                    </span>
+                </td>
+
+                <td>
+                    <span class="status-badge paid">
+                        <i class="bi bi-check-circle"></i>
+                        Payée
+                    </span>
+                </td>
+
+                <td>
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="Voir"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Supprimer"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+                </td>
+            </tr>
+
+            {% endif %}
+
+
+            <!-- ÉTAT VIDE -->
+
+            <tr id="emptyOrder" class="empty-state" style="display: none;">
+                <td colspan="8">
+                    <i class="bi bi-cart-x"></i>
+                    <h5>Aucune commande trouvée</h5>
+                    <p>Aucune commande ne correspond à votre recherche.</p>
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+</div>
+
+<!-- =========================================================
+     MODAL NOUVELLE COMMANDE
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="addOrderModal"
+    tabindex="-1"
+    aria-labelledby="addOrderModalLabel"
+    aria-hidden="true"
+>
+
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h5 class="modal-title" id="addOrderModalLabel">
+                    <i class="bi bi-cart-plus"></i>
+                    Nouvelle commande
+                </h5>
+
+                <small>
+                    Créer une nouvelle commande
+                </small>
+            </div>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Fermer"
+            ></button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label for="newClient" class="form-label">
+                        Client
+                    </label>
+
+                    <input
+                        type="text"
+                        id="newClient"
+                        class="form-control"
+                        placeholder="Nom du client"
+                    >
+                </div>
+
+
+                <div class="col-md-6">
+                    <label for="newMedicine" class="form-label">
+                        Médicament
+                    </label>
+
+                    <select id="newMedicine" class="form-select">
+                        <option value="">Sélectionner un médicament</option>
+                        {% for medicine in medicines %}
+                        <option value="{{ medicine.id_produit }}" data-price="{{ medicine.prix_unitaire }}">
+                            {{ medicine.designation }} ({{ medicine.quantite }} disponibles)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="col-md-4">
+                    <label for="newQuantity" class="form-label">
+                        Quantité
+                    </label>
+
+                    <input
+                        type="number"
+                        id="newQuantity"
+                        class="form-control"
+                        min="1"
+                        value="1"
+                    >
+                </div>
+
+
+                <div class="col-md-4">
+                    <label for="newAmount" class="form-label">
+                        Montant
+                    </label>
+
+                    <div class="input-group">
+
+                        <input
+                            type="number"
+                            id="newAmount"
+                            class="form-control"
+                            min="0"
+                            placeholder="0"
+                        >
+
+                        <span class="input-group-text">
+                            Ar
+                        </span>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <label for="newPayment" class="form-label">
+                        Paiement
+                    </label>
+
+                    <select
+                        id="newPayment"
+                        class="form-select"
+                    >
+                        <option value="Mobile Money">
+                            Mobile Money
+                        </option>
+
+                        <option value="Carte bancaire">
+                            Carte bancaire
+                        </option>
+
+                        <option value="Espèces">
+                            Espèces
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+            >
+                Annuler
+            </button>
+
+            <button
+                type="button"
+                class="save-order-btn"
+                id="saveOrder"
+            >
+                <i class="bi bi-check-lg"></i>
+                Créer la commande
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/commandes.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,918 @@
+/* =========================================================
+WELL PHARMA - PAGE STOCKS
+CSS spécifique à la page Stocks
+========================================================= */
+
+/* =========================================================
+HEADER DE LA PAGE
+========================================================= */
+
+.page-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 25px;
+}
+
+.page-header > div {
+display: flex;
+flex-direction: column;
+}
+
+.page-header h2 {
+margin: 0;
+font-size: 25px;
+font-weight: 600;
+color: #1f2937;
+}
+
+.page-header h2 i {
+color: #198754;
+margin-right: 8px;
+}
+
+.page-header p {
+margin: 5px 0 0;
+color: #7a8793;
+font-size: 14px;
+}
+
+/* =========================================================
+BOUTON NOUVELLE ENTRÉE
+========================================================= */
+
+.add-stock-btn {
+border: none;
+background: #198754;
+color: #ffffff;
+padding: 11px 18px;
+border-radius: 9px;
+font-family: "Poppins", sans-serif;
+font-size: 14px;
+font-weight: 500;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+transition: 0.2s ease;
+}
+
+.add-stock-btn:hover {
+background: #157347;
+transform: translateY(-1px);
+}
+
+.add-stock-btn i {
+font-size: 17px;
+}
+
+/* =========================================================
+CARTES RÉSUMÉ DU STOCK
+========================================================= */
+
+.stock-summary {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 18px;
+margin-bottom: 22px;
+}
+
+.stock-card {
+background: #ffffff;
+border: 1px solid #e8edf1;
+border-radius: 13px;
+min-height: 115px;
+padding: 20px;
+display: flex;
+align-items: center;
+gap: 15px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.stock-card-icon {
+width: 52px;
+height: 52px;
+min-width: 52px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 23px;
+}
+
+.stock-card-icon.green {
+background: #e8f6ef;
+color: #198754;
+}
+
+.stock-card-icon.blue {
+background: #eaf3ff;
+color: #0d6efd;
+}
+
+.stock-card-icon.orange {
+background: #fff4e6;
+color: #fd7e14;
+}
+
+.stock-card-icon.red {
+background: #fff0f1;
+color: #dc3545;
+}
+
+.stock-card span {
+display: block;
+color: #687582;
+font-size: 13px;
+margin-bottom: 4px;
+}
+
+.stock-card strong {
+display: block;
+color: #1f2937;
+font-size: 24px;
+font-weight: 600;
+line-height: 1.2;
+}
+
+.stock-card small {
+display: block;
+color: #98a2ad;
+font-size: 11px;
+margin-top: 3px;
+}
+
+/* =========================================================
+SECTION ANALYSE
+========================================================= */
+
+.stock-analysis {
+display: grid;
+grid-template-columns: 0.85fr 1.5fr;
+gap: 20px;
+margin-bottom: 22px;
+}
+
+/* =========================================================
+CARTES ENTRÉES / SORTIES + GRAPHIQUE
+========================================================= */
+
+.movement-card,
+.chart-card {
+background: #ffffff;
+border: 1px solid #e8edf1;
+border-radius: 13px;
+padding: 20px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.section-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 15px;
+margin-bottom: 20px;
+}
+
+.section-header h5 {
+margin: 0;
+color: #26323d;
+font-size: 15px;
+font-weight: 600;
+}
+
+.section-header h5 i {
+color: #198754;
+margin-right: 7px;
+}
+
+.section-header span {
+display: block;
+margin-top: 4px;
+color: #98a2ad;
+font-size: 11px;
+}
+
+/* =========================================================
+FILTRE PÉRIODE
+========================================================= */
+
+.section-header select {
+border: 1px solid #dfe5ea;
+background: #ffffff;
+color: #5d6975;
+border-radius: 7px;
+padding: 7px 10px;
+font-family: "Poppins", sans-serif;
+font-size: 11px;
+outline: none;
+cursor: pointer;
+}
+
+.section-header select:focus {
+border-color: #198754;
+}
+
+/* =========================================================
+RÉSUMÉ ENTRÉES / SORTIES
+========================================================= */
+
+.movement-content {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+.movement-item {
+border-radius: 11px;
+padding: 15px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.movement-item.entry {
+background: #edf9f3;
+}
+
+.movement-item.exit {
+background: #fff3f3;
+}
+
+.movement-icon {
+width: 40px;
+height: 40px;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 19px;
+}
+
+.movement-item.entry .movement-icon {
+background: #d9f2e4;
+color: #198754;
+}
+
+.movement-item.exit .movement-icon {
+background: #ffe1e3;
+color: #dc3545;
+}
+
+.movement-item span {
+display: block;
+color: #687582;
+font-size: 12px;
+}
+
+.movement-item strong {
+display: block;
+color: #26323d;
+font-size: 20px;
+font-weight: 600;
+line-height: 1.2;
+}
+
+.movement-item small {
+color: #98a2ad;
+font-size: 10px;
+}
+
+/* =========================================================
+GRAPHIQUE
+========================================================= */
+
+.chart-container {
+position: relative;
+width: 100%;
+height: 220px;
+}
+
+/* =========================================================
+TABLEAU DU STOCK
+========================================================= */
+
+.stock-table-box {
+background: #ffffff;
+border: 1px solid #e8edf1;
+border-radius: 13px;
+padding: 20px;
+margin-bottom: 22px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.table-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 15px;
+margin-bottom: 18px;
+}
+
+.table-header h5 {
+margin: 0;
+color: #26323d;
+font-size: 15px;
+font-weight: 600;
+}
+
+.table-header h5 i {
+color: #198754;
+margin-right: 7px;
+}
+
+.table-header span {
+display: block;
+color: #98a2ad;
+font-size: 11px;
+margin-top: 4px;
+}
+
+/* =========================================================
+BOUTON RÉINITIALISER
+========================================================= */
+
+.view-all-btn {
+border: 1px solid #dfe5ea;
+background: #ffffff;
+color: #607080;
+border-radius: 7px;
+padding: 7px 12px;
+font-family: "Poppins", sans-serif;
+font-size: 11px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 6px;
+transition: 0.2s ease;
+}
+
+.view-all-btn:hover {
+border-color: #198754;
+color: #198754;
+background: #f0f8f4;
+}
+
+/* =========================================================
+BARRE DE RECHERCHE ET FILTRES
+========================================================= */
+
+.stock-toolbar {
+display: grid;
+grid-template-columns: 1.7fr 1fr 1fr 1fr;
+gap: 10px;
+margin-bottom: 18px;
+}
+
+.search-box {
+height: 42px;
+border: 1px solid #dfe5ea;
+border-radius: 8px;
+background: #ffffff;
+display: flex;
+align-items: center;
+padding: 0 12px;
+}
+
+.search-box i {
+color: #9aa5af;
+font-size: 16px;
+margin-right: 8px;
+}
+
+.search-box input {
+width: 100%;
+border: none;
+outline: none;
+font-family: "Poppins", sans-serif;
+font-size: 12px;
+color: #26323d;
+}
+
+.search-box input::placeholder {
+color: #a1abb4;
+}
+
+.filter-select {
+height: 42px;
+border: 1px solid #dfe5ea;
+border-radius: 8px;
+padding: 0 10px;
+background: #ffffff;
+color: #607080;
+font-family: "Poppins", sans-serif;
+font-size: 11px;
+outline: none;
+cursor: pointer;
+}
+
+.filter-select:focus,
+.search-box:focus-within {
+border-color: #198754;
+}
+
+/* =========================================================
+TABLE
+========================================================= */
+
+.stock-table {
+width: 100%;
+border-collapse: collapse;
+min-width: 850px;
+}
+
+.stock-table thead th {
+background: #f8fafb;
+color: #71808e;
+font-size: 11px;
+font-weight: 600;
+text-align: left;
+padding: 13px 12px;
+border-bottom: 1px solid #e8edf1;
+white-space: nowrap;
+}
+
+.stock-table tbody td {
+color: #4f5d69;
+font-size: 12px;
+padding: 14px 12px;
+border-bottom: 1px solid #eef1f4;
+vertical-align: middle;
+}
+
+.stock-table tbody tr:last-child td {
+border-bottom: none;
+}
+
+.stock-table tbody tr:hover {
+background: #fbfdfc;
+}
+
+/* =========================================================
+NOM DU PRODUIT
+========================================================= */
+
+.product-name {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.product-icon {
+width: 34px;
+height: 34px;
+border-radius: 8px;
+background: #e8f6ef;
+color: #198754;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+.product-icon i {
+font-size: 16px;
+}
+
+.product-name strong {
+color: #26323d;
+font-size: 12px;
+font-weight: 500;
+}
+
+/* =========================================================
+RÉFÉRENCE
+========================================================= */
+
+.reference {
+color: #687582;
+font-size: 11px;
+font-family: monospace;
+}
+
+/* =========================================================
+QUANTITÉ
+========================================================= */
+
+.quantity {
+color: #26323d;
+font-weight: 600;
+}
+
+.threshold {
+color: #7a8793;
+}
+
+/* =========================================================
+BADGES DE STATUT
+========================================================= */
+
+.status-badge {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+padding: 5px 9px;
+border-radius: 20px;
+font-size: 10px;
+font-weight: 500;
+white-space: nowrap;
+}
+
+.status-badge i {
+font-size: 11px;
+}
+
+.status-badge.disponible {
+background: #e8f6ef;
+color: #198754;
+}
+
+.status-badge.faible {
+background: #fff4df;
+color: #d88900;
+}
+
+.status-badge.rupture {
+background: #fff0f1;
+color: #dc3545;
+}
+
+/* =========================================================
+BOUTONS ACTIONS
+========================================================= */
+
+.action-buttons {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.action-btn {
+width: 30px;
+height: 30px;
+border: 1px solid #e4e9ed;
+background: #ffffff;
+border-radius: 7px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: 0.2s ease;
+}
+
+.action-btn i {
+font-size: 13px;
+}
+
+.action-btn.view {
+color: #0d6efd;
+}
+
+.action-btn.view:hover {
+background: #eaf3ff;
+border-color: #b8d5ff;
+}
+
+.action-btn.entry {
+color: #198754;
+}
+
+.action-btn.entry:hover {
+background: #e8f6ef;
+border-color: #b8e0ca;
+}
+
+.action-btn.exit {
+color: #dc3545;
+}
+
+.action-btn.exit:hover {
+background: #fff0f1;
+border-color: #f3b9bf;
+}
+
+/* =========================================================
+ÉTAT VIDE
+========================================================= */
+
+.empty-state {
+text-align: center;
+}
+
+.empty-state td {
+padding: 45px 20px !important;
+}
+
+.empty-state i {
+display: block;
+color: #b4bec7;
+font-size: 35px;
+margin-bottom: 10px;
+}
+
+.empty-state h5 {
+margin: 0 0 5px;
+color: #56636f;
+font-size: 14px;
+font-weight: 600;
+}
+
+.empty-state p {
+margin: 0;
+color: #9aa5af;
+font-size: 11px;
+}
+
+/* =========================================================
+ALERTES + DERNIERS MOUVEMENTS
+========================================================= */
+
+.bottom-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+}
+
+.info-card {
+background: #ffffff;
+border: 1px solid #e8edf1;
+border-radius: 13px;
+padding: 20px;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.info-card-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 15px;
+margin-bottom: 16px;
+}
+
+.info-card-header h5 {
+margin: 0;
+color: #26323d;
+font-size: 15px;
+font-weight: 600;
+}
+
+.info-card-header h5 i {
+color: #198754;
+margin-right: 7px;
+}
+
+.see-all {
+border: none;
+background: transparent;
+color: #198754;
+font-family: "Poppins", sans-serif;
+font-size: 11px;
+cursor: pointer;
+white-space: nowrap;
+}
+
+.see-all:hover {
+text-decoration: underline;
+}
+
+/* =========================================================
+LISTE DES ALERTES
+========================================================= */
+
+.alert-list {
+display: flex;
+flex-direction: column;
+}
+
+.alert-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 11px 0;
+border-bottom: 1px solid #eef1f4;
+}
+
+.alert-item:last-child {
+border-bottom: none;
+}
+
+.alert-icon {
+width: 35px;
+height: 35px;
+border-radius: 9px;
+background: #fff4df;
+color: #d88900;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+.alert-icon i {
+font-size: 15px;
+}
+
+.alert-item strong {
+display: block;
+color: #394652;
+font-size: 12px;
+font-weight: 600;
+}
+
+.alert-item span {
+display: block;
+color: #98a2ad;
+font-size: 10px;
+margin-top: 2px;
+}
+
+/* =========================================================
+DERNIERS MOUVEMENTS
+========================================================= */
+
+.recent-list {
+display: flex;
+flex-direction: column;
+}
+
+.recent-item {
+display: flex;
+align-items: center;
+gap: 11px;
+padding: 11px 0;
+border-bottom: 1px solid #eef1f4;
+}
+
+.recent-item:last-child {
+border-bottom: none;
+}
+
+.recent-icon {
+width: 35px;
+height: 35px;
+border-radius: 9px;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+
+.recent-icon.entry {
+background: #e8f6ef;
+color: #198754;
+}
+
+.recent-icon.exit {
+background: #fff0f1;
+color: #dc3545;
+}
+
+.recent-info {
+flex: 1;
+min-width: 0;
+}
+
+.recent-info strong {
+display: block;
+color: #394652;
+font-size: 12px;
+font-weight: 600;
+}
+
+.recent-info span {
+display: block;
+color: #98a2ad;
+font-size: 10px;
+margin-top: 2px;
+}
+
+.movement-quantity {
+font-size: 12px;
+font-weight: 600;
+}
+
+.movement-quantity.positive {
+color: #198754;
+}
+
+.movement-quantity.negative {
+color: #dc3545;
+}
+
+/* =========================================================
+RESPONSIVE - TABLETTE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+
+.stock-summary {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.stock-analysis {
+    grid-template-columns: 1fr;
+}
+
+.stock-toolbar {
+    grid-template-columns: 1.5fr 1fr 1fr;
+}
+
+.stock-toolbar .filter-select:last-child {
+    grid-column: span 1;
+}
+
+
+}
+
+/* =========================================================
+RESPONSIVE - PETITE TABLETTE
+========================================================= */
+
+@media (max-width: 900px) {
+
+
+.stock-toolbar {
+    grid-template-columns: 1fr 1fr;
+}
+
+.stock-toolbar .search-box {
+    grid-column: span 2;
+}
+
+.bottom-grid {
+    grid-template-columns: 1fr;
+}
+
+
+}
+
+/* =========================================================
+RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+
+.page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.page-header h2 {
+    font-size: 21px;
+}
+
+.add-stock-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.stock-summary {
+    grid-template-columns: 1fr;
+}
+
+.stock-analysis {
+    grid-template-columns: 1fr;
+}
+
+.movement-content {
+    grid-template-columns: 1fr;
+}
+
+.stock-toolbar {
+    grid-template-columns: 1fr;
+}
+
+.stock-toolbar .search-box {
+    grid-column: span 1;
+}
+
+.table-header {
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.view-all-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.section-header {
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.section-header select {
+    width: 100%;
+}
+
+.info-card-header {
+    align-items: flex-start;
+}
+
+
+}
+
+

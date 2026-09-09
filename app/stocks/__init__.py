@@ -1,0 +1,1 @@
+from app.stocks.routes import stocks

@@ -1,0 +1,1003 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+Stocks - WellPharma
+{% endblock %}
+
+{% block css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/stocks.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            <i class="bi bi-box-seam"></i>
+            Stocks
+        </h2>
+
+        <p>
+            Gestion et suivi des mouvements de stock
+        </p>
+
+    </div>
+
+    <button
+        class="add-stock-btn"
+        id="addStockBtn"
+        type="button"
+    >
+
+        <i class="bi bi-plus-lg"></i>
+        Nouvelle entrée
+
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     CARTES RÉSUMÉ
+====================================================== -->
+
+<div class="stock-summary">
+
+    <!-- STOCK TOTAL -->
+
+    <div class="stock-card">
+
+        <div class="stock-card-icon green">
+            <i class="bi bi-box-seam"></i>
+        </div>
+
+        <div>
+
+            <span>
+                Stock total
+            </span>
+
+            <strong>
+                {{ stats.total_stock }}
+            </strong>
+
+            <small>
+                unités disponibles
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- ENTRÉES -->
+
+    <div class="stock-card">
+
+        <div class="stock-card-icon blue">
+            <i class="bi bi-box-arrow-in-down"></i>
+        </div>
+
+        <div>
+
+            <span>
+                Entrées
+            </span>
+
+            <strong>
+                {{ stats.total_entries }}
+            </strong>
+
+            <small>
+                mouvements
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- SORTIES -->
+
+    <div class="stock-card">
+
+        <div class="stock-card-icon orange">
+            <i class="bi bi-box-arrow-up"></i>
+        </div>
+
+        <div>
+
+            <span>
+                Sorties
+            </span>
+
+            <strong>
+                {{ stats.total_exits }}
+            </strong>
+
+            <small>
+                mouvements
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- ALERTES -->
+
+    <div class="stock-card">
+
+        <div class="stock-card-icon red">
+            <i class="bi bi-exclamation-triangle"></i>
+        </div>
+
+        <div>
+
+            <span>
+                Alertes
+            </span>
+
+            <strong>
+                {{ stats.total_alerts }}
+            </strong>
+
+            <small>
+                à surveiller
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ANALYSE DES MOUVEMENTS
+====================================================== -->
+
+<div class="stock-analysis">
+
+    <!-- ENTRÉES / SORTIES -->
+
+    <div class="movement-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h5>
+                    <i class="bi bi-arrow-left-right"></i>
+                    Entrées / Sorties
+                </h5>
+
+                <span>
+                    Activité récente du stock
+                </span>
+
+            </div>
+
+            <select id="periodFilter">
+
+                <option value="7">
+                    7 derniers jours
+                </option>
+
+                <option value="30">
+                    30 derniers jours
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="movement-content">
+
+            <!-- ENTRÉES -->
+
+            <div class="movement-item entry">
+
+                <div class="movement-icon">
+                    <i class="bi bi-arrow-down"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Entrées
+                    </span>
+
+                    <strong>
+                        {{ stats.total_entries }}
+                    </strong>
+
+                    <small>
+                        mouvements
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- SORTIES -->
+
+            <div class="movement-item exit">
+
+                <div class="movement-icon">
+                    <i class="bi bi-arrow-up"></i>
+                </div>
+
+                <div>
+
+                    <span>
+                        Sorties
+                    </span>
+
+                    <strong>
+                        {{ stats.total_exits }}
+                    </strong>
+
+                    <small>
+                        mouvements
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- GRAPHIQUE -->
+
+    <div class="chart-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h5>
+                    <i class="bi bi-graph-up"></i>
+                    Évolution des mouvements
+                </h5>
+
+                <span>
+                    Entrées et sorties
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="chart-container">
+
+            <canvas id="stockMovementChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TABLEAU DU STOCK
+====================================================== -->
+
+<div class="stock-table-box">
+
+    <!-- HEADER -->
+
+    <div class="table-header">
+
+        <div>
+
+            <h5>
+                <i class="bi bi-list-ul"></i>
+                État du stock
+            </h5>
+
+            <span id="stockCount">
+                {{ stocks|length }} produit(s)
+            </span>
+
+        </div>
+
+        <button
+            class="view-all-btn"
+            id="resetFilters"
+            type="button"
+        >
+
+            <i class="bi bi-arrow-clockwise"></i>
+            Réinitialiser
+
+        </button>
+
+    </div>
+
+
+    <!-- FILTRES -->
+
+    <div class="stock-toolbar">
+
+        <!-- RECHERCHE -->
+
+        <div class="search-box">
+
+            <i class="bi bi-search"></i>
+
+            <input
+                type="text"
+                id="stockSearch"
+                placeholder="Rechercher un médicament..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- CATÉGORIE -->
+
+        <select
+            id="categoryFilter"
+            class="filter-select"
+        >
+
+            <option value="">
+                Toutes les catégories
+            </option>
+
+            <option value="Antalgique">
+                Antalgique
+            </option>
+
+            <option value="Antibiotique">
+                Antibiotique
+            </option>
+
+            <option value="Antitussif">
+                Antitussif
+            </option>
+
+            <option value="Antipaludique">
+                Antipaludique
+            </option>
+
+        </select>
+
+
+        <!-- STATUT -->
+
+        <select
+            id="statusFilter"
+            class="filter-select"
+        >
+
+            <option value="">
+                Tous les statuts
+            </option>
+
+            <option value="En stock">
+                En stock
+            </option>
+
+            <option value="Stock faible">
+                Stock faible
+            </option>
+
+            <option value="Rupture">
+                Rupture
+            </option>
+
+        </select>
+
+
+        <!-- TRI -->
+
+        <select
+            id="sortFilter"
+            class="filter-select"
+        >
+
+            <option value="">
+                Trier par
+            </option>
+
+            <option value="quantity-desc">
+                Quantité décroissante
+            </option>
+
+            <option value="quantity-asc">
+                Quantité croissante
+            </option>
+
+            <option value="name">
+                Nom A-Z
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-responsive">
+
+        <table class="stock-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Médicament</th>
+                    <th>Référence</th>
+                    <th>Catégorie</th>
+                    <th>Quantité</th>
+                    <th>Seuil</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="stockTableBody">
+
+                {% for stock in stocks %}
+
+                <tr
+                    class="stock-row"
+                    data-id="{{ stock.id }}"
+                    data-name="{{ stock.name|lower }}"
+                    data-category="{{ stock.category|lower }}"
+                    data-status="{{ stock.status|lower }}"
+                    data-quantity="{{ stock.quantity }}"
+                >
+
+                    <!-- ID -->
+
+                    <td>
+                        #{{ stock.id }}
+                    </td>
+
+
+                    <!-- MÉDICAMENT -->
+
+                    <td>
+
+                        <div class="product-name">
+
+                            <div class="product-icon">
+
+                                <i class="bi bi-capsule"></i>
+
+                            </div>
+
+                            <strong>
+                                {{ stock.name }}
+                            </strong>
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- RÉFÉRENCE -->
+
+                    <td>
+
+                        <span class="reference">
+                            {{ stock.reference }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- CATÉGORIE -->
+
+                    <td>
+                        {{ stock.category }}
+                    </td>
+
+
+                    <!-- QUANTITÉ -->
+
+                    <td>
+
+                        <strong class="quantity">
+                            {{ stock.quantity }}
+                        </strong>
+
+                    </td>
+
+
+                    <!-- SEUIL -->
+
+                    <td>
+
+                        <span class="threshold">
+                            {{ stock.threshold }}
+                        </span>
+
+                    </td>
+
+
+                    <!-- STATUT -->
+
+                    <td>
+
+                        {% if stock.status == "Rupture" %}
+
+                            <span class="status-badge rupture">
+
+                                <i class="bi bi-x-circle"></i>
+                                Rupture
+
+                            </span>
+
+                        {% elif stock.status == "Stock faible" %}
+
+                            <span class="status-badge faible">
+
+                                <i class="bi bi-exclamation-circle"></i>
+                                Stock faible
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge disponible">
+
+                                <i class="bi bi-check-circle"></i>
+                                En stock
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <!-- VOIR -->
+
+                            <button
+                                type="button"
+                                class="action-btn view"
+                                title="Voir"
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </button>
+
+
+                            <!-- ENTRÉE -->
+
+                            <button
+                                type="button"
+                                class="action-btn entry"
+                                title="Entrée"
+                            >
+
+                                <i class="bi bi-plus-lg"></i>
+
+                            </button>
+
+
+                            <!-- SORTIE -->
+
+                            <button
+                                type="button"
+                                class="action-btn exit"
+                                title="Sortie"
+                            >
+
+                                <i class="bi bi-dash-lg"></i>
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+
+                <!-- AUCUN RÉSULTAT -->
+
+                <tr
+                    id="emptyStock"
+                    class="empty-state"
+                    style="display: none;"
+                >
+
+                    <td colspan="8">
+
+                        <i class="bi bi-box-seam"></i>
+
+                        <h5>
+                            Aucun résultat
+                        </h5>
+
+                        <p>
+                            Aucun produit ne correspond à votre recherche.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ALERTES + DERNIERS MOUVEMENTS
+====================================================== -->
+
+<div class="bottom-grid">
+
+    <!-- ALERTES -->
+
+    <div class="info-card">
+
+        <div class="info-card-header">
+
+            <div>
+
+                <h5>
+
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Alertes à surveiller
+
+                </h5>
+
+            </div>
+
+            <button
+                class="see-all"
+                type="button"
+            >
+                Voir tout →
+            </button>
+
+        </div>
+
+
+        <div class="alert-list">
+
+            {% for alert in alerts %}
+
+            <div class="alert-item">
+
+                <div class="alert-icon">
+
+                    <i class="bi {{ alert.icon }}"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ alert.medicine }}
+                    </strong>
+
+                    <span>
+
+                        {{ alert.type }}
+                        ·
+                        {{ alert.message }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <!-- DERNIERS MOUVEMENTS -->
+
+    <div class="info-card">
+
+        <div class="info-card-header">
+
+            <div>
+
+                <h5>
+
+                    <i class="bi bi-clock-history"></i>
+                    Derniers mouvements
+
+                </h5>
+
+            </div>
+
+            <button
+                class="see-all"
+                type="button"
+            >
+                Voir tout →
+            </button>
+
+        </div>
+
+
+        <div class="recent-list">
+
+            {% for movement in recent_movements %}
+
+            <div class="recent-item">
+
+                <div
+                    class="recent-icon
+                    {% if movement.type == 'Entrée' %}
+                        entry
+                    {% else %}
+                        exit
+                    {% endif %}"
+                >
+
+                    {% if movement.type == "Entrée" %}
+
+                        <i class="bi bi-arrow-down"></i>
+
+                    {% else %}
+
+                        <i class="bi bi-arrow-up"></i>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="recent-info">
+
+                    <strong>
+                        {{ movement.medicine }}
+                    </strong>
+
+                    <span>
+
+                        {{ movement.type }}
+                        ·
+                        {{ movement.date }}
+
+                    </span>
+
+                </div>
+
+
+                <strong
+                    class="movement-quantity
+                    {% if movement.type == 'Entrée' %}
+                        positive
+                    {% else %}
+                        negative
+                    {% endif %}"
+                >
+
+                    {% if movement.type == "Entrée" %}
+
+                        +{{ movement.quantity }}
+
+                    {% else %}
+
+                        -{{ movement.quantity }}
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODALE : NOUVELLE ENTRÉE
+====================================================== -->
+
+<div
+    class="modal fade"
+    id="stockEntryModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- HEADER MODALE -->
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-box-arrow-in-down"></i>
+                    Nouvelle entrée de stock
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+            <!-- CORPS MODALE -->
+
+            <div class="modal-body">
+
+                <!-- MÉDICAMENT -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="entryMedicine"
+                        class="form-label"
+                    >
+                        Médicament
+                    </label>
+
+                    <select
+                        id="entryMedicine"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Sélectionner un médicament
+                        </option>
+
+                        {% for medicine in medicines %}
+
+                        <option value="{{ medicine.id_produit }}">
+
+                            {{ medicine.designation }}
+                            — stock actuel :
+                            {{ medicine.quantite }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUANTITÉ -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="entryQuantity"
+                        class="form-label"
+                    >
+                        Quantité à ajouter
+                    </label>
+
+                    <input
+                        type="number"
+                        id="entryQuantity"
+                        class="form-control"
+                        min="1"
+                        value="1"
+                    >
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="stockEntryMessage"
+                    class="alert d-none"
+                ></div>
+
+            </div>
+
+
+            <!-- FOOTER MODALE -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    id="saveStockEntry"
+                >
+
+                    <i class="bi bi-check-lg"></i>
+                    Enregistrer
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+{% block js %}
+
+<script>
+
+    window.stockMovements = {{ movements | tojson }};
+
+</script>
+
+<script
+    src="{{ url_for('static', filename='js/stocks.js') }}"
+></script>
+
+{% endblock %}
+```

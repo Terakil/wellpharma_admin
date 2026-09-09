@@ -1,0 +1,834 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f5f7fa;
+    color: #1f2937;
+}
+/* =========================================================
+   BOUTON FERMER SIDEBAR (mobile)
+========================================================= */
+
+.sidebar-close {
+    display: none; /* caché par défaut, visible seulement en mobile */
+
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #f3f6f8;
+    color: #52606d;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+    z-index: 1001;
+}
+
+.sidebar-close:hover {
+    background: #fff1f1;
+    color: #dc3545;
+}
+
+/* =========================================================
+   APP WRAPPER
+========================================================= */
+
+.app-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 290px;
+    height: 100vh;
+
+    background: #ffffff;
+
+    border-right: 1px solid #e7edf2;
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   LOGO ZONE
+========================================================= */
+
+.logo-zone {
+    height: 86px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 18px;
+
+    padding: 10px 18px;
+
+    border-bottom: 1px solid #edf1f4;
+
+    flex-shrink: 0;
+}
+
+
+.logo-wellpharma {
+    width: 138px;
+    height: auto;
+
+    object-fit: contain;
+}
+
+
+.logo-ispm {
+    width: 72px;
+    height: 72px;
+
+    object-fit: contain;
+}
+/* =========================================================
+   ANIMATION LOGOS — FLOTTANT
+========================================================= */
+
+.logo-wellpharma,
+.logo-ispm {
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+/* Léger décalage pour que les deux logos ne flottent pas en même temps */
+.logo-ispm {
+    animation-delay: 0.6s;
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+} 
+
+.logo-float-wrap {
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+.logo-wellpharma {
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.logo-wellpharma:hover {
+    transform: scale(1.06);
+    filter: drop-shadow(0 4px 8px rgba(25, 135, 84, 0.25));
+}
+
+
+/* =========================================================
+   SIDEBAR MENU
+========================================================= */
+
+.sidebar-menu {
+
+    width: 100%;
+
+    padding: 20px 14px 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   SIDEBAR ITEM
+========================================================= */
+
+.sidebar-item {
+
+    width: 100%;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 0 20px;
+
+    border-radius: 11px;
+
+    text-decoration: none !important;
+
+    color: #607080;
+
+    font-size: 15px;
+    font-weight: 500;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+
+}
+
+
+/* ICON */
+
+.sidebar-item i {
+
+    width: 22px;
+
+    font-size: 21px;
+
+    line-height: 1;
+
+    flex-shrink: 0;
+
+}
+
+
+/* TEXTE */
+
+.sidebar-item span {
+    white-space: nowrap;
+}
+
+
+/* HOVER */
+
+.sidebar-item:hover {
+
+    background: #f0f8f4;
+
+    color: #198754;
+
+}
+
+
+/* ACTIVE */
+
+.sidebar-item.active {
+
+    background: #e8f6ef;
+
+    color: #198754;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.sidebar-logout {
+
+    margin-top: auto;
+
+    padding: 12px 14px 8px;
+
+}
+
+
+.logout-link {
+
+    width: 100%;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 0 20px;
+
+    color: #dc3545;
+
+    text-decoration: none !important;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    border-radius: 11px;
+
+    transition: 0.2s ease;
+
+}
+
+
+.logout-link i {
+
+    width: 22px;
+
+    font-size: 21px;
+
+}
+
+
+.logout-link:hover {
+
+    background: #fff1f2;
+
+    color: #dc3545;
+
+}
+
+
+/* =========================================================
+   IMAGE BAS SIDEBAR
+========================================================= */
+
+.sidebar-bottom-image {
+
+    width: 100%;
+
+    height: 75px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+
+}
+
+
+.sidebar-bottom-image img {
+
+    width: 145px;
+
+    height: auto;
+
+    object-fit: contain;
+
+    opacity: 0.9;
+
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+
+    margin-left: 290px;
+
+    width: calc(100% - 290px);
+
+    min-height: 100vh;
+
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.topbar {
+
+    position: fixed;
+
+    top: 0;
+    right: 0;
+
+    left: 290px;
+
+    height: 72px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #e7edf2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    z-index: 900;
+
+}
+
+
+/* =========================================================
+   MENU BUTTON
+========================================================= */
+
+.menu-button {
+
+    width: 42px;
+    height: 42px;
+
+    border: none;
+
+    background: transparent;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #52606d;
+
+    font-size: 27px;
+
+    cursor: pointer;
+
+    border-radius: 8px;
+
+}
+
+
+.menu-button:hover {
+
+    background: #f3f6f8;
+
+}
+
+
+/* =========================================================
+   TOPBAR RIGHT
+========================================================= */
+
+.topbar-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 30px;
+
+    height: 100%;
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.topbar-date {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #607080;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+
+}
+
+
+.topbar-date i {
+
+    font-size: 17px;
+
+}
+
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+.topbar-notification {
+
+    position: relative;
+
+    width: 34px;
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #52606d;
+
+}
+
+
+.topbar-notification > i {
+
+    font-size: 22px;
+
+}
+
+
+.notification-badge {
+
+    position: absolute;
+
+    top: -2px;
+    right: -5px;
+
+    min-width: 21px;
+    height: 21px;
+
+    padding: 0 5px;
+
+    border-radius: 50%;
+
+    background: #dc3545;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   PROFILE ADMINISTRATEUR
+========================================================= */
+
+.topbar-profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #18212b;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+/* CERCLE ADMIN */
+
+.admin-icon {
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+
+    border: 2px solid #198754;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #198754;
+
+    background: #ffffff;
+
+}
+
+
+.admin-icon i {
+
+    font-size: 19px;
+
+}
+
+
+/* =========================================================
+   PAGE CONTAINER
+========================================================= */
+
+.page-container {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 72px 35px 35px;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .sidebar {
+        width: 250px;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+
+    .topbar {
+        left: 250px;
+    }
+
+    .topbar-right {
+        gap: 18px;
+    }
+
+    .logo-wellpharma {
+        width: 120px;
+    }
+
+    .logo-ispm {
+        width: 62px;
+        height: 62px;
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .sidebar {
+
+        transform: translateX(-100%);
+
+        transition: transform 0.25s ease;
+
+    }
+
+
+    .sidebar.open {
+
+        transform: translateX(0);
+
+    }
+
+
+    .main-content {
+
+        margin-left: 0;
+
+        width: 100%;
+
+    }
+
+
+    .topbar {
+
+        left: 0;
+
+    }
+
+
+    .topbar-date {
+
+        display: none;
+
+    }
+
+}
+@media (max-width: 800px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-close {
+        display: flex; /* visible uniquement quand la sidebar peut s'ouvrir/fermer */
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .topbar {
+        left: 0;
+    }
+
+    .topbar-date {
+        display: none;
+    }
+
+}
+
+/* =====================================================
+   MODALE DE DECONNEXION
+===================================================== */
+
+.logout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.logout-modal-overlay.show {
+    display: flex;
+}
+
+.logout-modal {
+    width: 100%;
+    max-width: 430px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.20);
+    animation: logoutModalAppear 0.2s ease;
+}
+
+.logout-modal-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #e8f5ee;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+}
+
+.logout-modal h3 {
+    margin: 0 0 10px;
+    font-size: 21px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.logout-modal p {
+    margin: 0 auto 25px;
+    max-width: 340px;
+    color: #7a8793;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.logout-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.logout-cancel,
+.logout-confirm {
+    min-width: 130px;
+    height: 44px;
+    border-radius: 9px;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logout-cancel {
+    border: 1px solid #dfe5ea;
+    background: #ffffff;
+    color: #59636e;
+}
+
+.logout-cancel:hover {
+    background: #f5f7fa;
+}
+
+.logout-confirm {
+    border: none;
+    background: #198754;
+    color: #ffffff;
+}
+
+.logout-confirm:hover {
+    background: #157347;
+    color: #ffffff;
+}
+
+.logout-confirm i {
+    margin-right: 7px;
+}
+
+@keyframes logoutModalAppear {
+
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}

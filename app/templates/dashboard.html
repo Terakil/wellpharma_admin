@@ -1,0 +1,341 @@
+{% extends "base.html" %} {% block css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard.css') }}"
+/>
+{% endblock %} {% block title %}Dashboard{% endblock %} {% block content %}
+
+<!-- =========================
+     5 CARTES PRINCIPALES
+========================= -->
+
+<div class="cards">
+  <!-- CHIFFRE D'AFFAIRES -->
+  <div class="card card-green">
+    <div class="card-icon">
+      <i class="bi bi-currency-dollar"></i>
+    </div>
+
+    <div>
+      <h6>Chiffre d'affaires</h6>
+
+      <h2>{{ "{:,}".format(stats.revenue).replace(",", " ") }} Ar</h2>
+
+      <small>Aujourd'hui</small>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div class="card">
+    <div class="card-icon">
+      <i class="bi bi-box-seam"></i>
+    </div>
+
+    <div>
+      <h6>Stock disponible</h6>
+
+      <h2>{{ stats.stock }}</h2>
+
+      <small>Médicaments</small>
+    </div>
+  </div>
+
+  <!-- CLIENTS -->
+  <div class="card">
+    <div class="card-icon">
+      <i class="bi bi-people"></i>
+    </div>
+
+    <div>
+      <h6>Clients</h6>
+
+      <h2>{{ stats.clients }}</h2>
+
+      <small>Inscrits</small>
+    </div>
+  </div>
+
+  <!-- COMMANDES -->
+  <div class="card">
+    <div class="card-icon">
+      <i class="bi bi-cart3"></i>
+    </div>
+
+    <div>
+      <h6>Commandes du jour</h6>
+
+      <h2>{{ stats.orders }}</h2>
+
+      <small>Aujourd'hui</small>
+    </div>
+  </div>
+
+  <!-- RUPTURES -->
+  <div class="card">
+    <div class="card-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+
+    <div>
+      <h6>Ruptures</h6>
+
+      <h2>{{ stats.out_of_stock }}</h2>
+
+      <small>Médicaments</small>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     COURBE + ENTREES / SORTIES
+========================= -->
+
+<div class="dashboard-middle">
+  <!-- ÉVOLUTION DES VENTES -->
+  <div class="graph-box">
+    <div class="box-header">
+      <h5>
+        <i class="bi bi-graph-up-arrow"></i>
+        Évolution des ventes
+      </h5>
+
+      <select id="salesPeriod" class="period-select">
+        <option value="7">7 derniers jours</option>
+        <option value="30">30 derniers jours</option>
+        <option value="month">Ce mois</option>
+        <option value="year">Cette année</option>
+      </select>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="salesChart"></canvas>
+    </div>
+  </div>
+
+  <!-- ENTREES / SORTIES -->
+  <div class="stock-movement-box">
+    <div class="box-header">
+      <h5>
+        <i class="bi bi-arrow-left-right"></i>
+        Entrées / Sorties de stock
+      </h5>
+      <select id="stockPeriod" class="period-select">
+        <option value="day">Aujourd'hui</option>
+
+        <option value="week" selected>Cette semaine</option>
+
+        <option value="month">Ce mois</option>
+
+        <option value="year">Cette année</option>
+      </select>
+    </div>
+
+    <!-- ENTREES / SORTIES -->
+    <div class="stock-summary">
+      <div class="stock-summary-item entry">
+        <div class="summary-icon">
+          <i class="bi bi-box-arrow-in-down"></i>
+        </div>
+
+        <div>
+          <span>Entrées</span>
+          <strong>{{ stock_entries }}</strong>
+        </div>
+      </div>
+      <div class="stock-summary-item exit">
+        <div class="summary-icon">
+          <i class="bi bi-box-arrow-up"></i>
+        </div>
+
+        <div>
+          <span>Sorties</span>
+          <strong>{{ stock_exits }}</strong>
+        </div>
+      </div>
+    </div>
+    <!-- DETAILS -->
+    <div class="stock-details">
+      <div class="stock-detail">
+        <span>Médicaments entrés</span>
+        <strong>{{ stock_entries }}</strong>
+      </div>
+
+      <div class="stock-detail">
+        <span>Médicaments sortis</span>
+        <strong>{{ stock_exits }}</strong>
+      </div>
+
+      <div class="stock-detail">
+        <span>Ruptures de stock</span>
+        <strong>{{ stats.out_of_stock }}</strong>
+      </div>
+
+      <div class="stock-detail">
+        <span>Alertes péremption</span>
+        <strong>{{ expiration_alerts }}</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     3 BLOCS DU BAS
+========================= -->
+
+<div class="dashboard-bottom">
+  <!-- DERNIÈRES COMMANDES -->
+  <div class="dashboard-box table-box">
+    <div class="box-header">
+      <h5>
+        <i class="bi bi-clock-history"></i>
+        Dernières commandes
+      </h5>
+
+      <a href="#" class="view-all"> Voir tout </a>
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Date</th>
+            <th>Montant</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for order in recent_orders %}
+
+          <tr>
+            <td>#{{ order.id }}</td>
+
+            <td>{{ order.client }}</td>
+
+            <td>{{ order.date }}</td>
+
+            <td>{{ order.amount }}</td>
+
+            <td>
+              {% if order.status == "Payée" %}
+
+              <span class="badge bg-success"> Payée </span>
+
+              {% else %}
+
+              <span class="badge bg-warning text-dark">
+                {{ order.status }}
+              </span>
+
+              {% endif %}
+            </td>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TOP 5 MEDICAMENTS -->
+  <div class="dashboard-box top-medicaments-box">
+    <div class="box-header">
+      <h5>
+        <i class="bi bi-trophy"></i>
+        Top 5 médicaments les plus vendus
+      </h5>
+
+      <a href="#" class="view-all"> Voir tout </a>
+    </div>
+
+    <div class="top-medicaments-list">
+      <div class="medicine-item">
+        <span class="rank">1</span>
+
+        <div class="medicine-info">
+          <strong>Paracétamol</strong>
+          <small>145 ventes</small>
+        </div>
+      </div>
+
+      <div class="medicine-item">
+        <span class="rank">2</span>
+
+        <div class="medicine-info">
+          <strong>Amoxicilline</strong>
+          <small>120 ventes</small>
+        </div>
+      </div>
+
+      <div class="medicine-item">
+        <span class="rank">3</span>
+
+        <div class="medicine-info">
+          <strong>Ibuprofène</strong>
+          <small>98 ventes</small>
+        </div>
+      </div>
+
+      <div class="medicine-item">
+        <span class="rank">4</span>
+
+        <div class="medicine-info">
+          <strong>Doliprane</strong>
+          <small>87 ventes</small>
+        </div>
+      </div>
+
+      <div class="medicine-item">
+        <span class="rank">5</span>
+
+        <div class="medicine-info">
+          <strong>Vitamine C</strong>
+          <small>74 ventes</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="dashboard-box notification-box">
+    <div class="box-header">
+      <h5>
+        <i class="bi bi-bell-fill"></i>
+        Notifications
+      </h5>
+
+      <a href="#" class="view-all"> Voir tout </a>
+    </div>
+
+    <ul>
+      <li>
+        <span class="dot danger"></span>
+        <span>Rupture de stock</span>
+      </li>
+
+      <li>
+        <span class="dot success"></span>
+        <span>Nouvelle commande</span>
+      </li>
+
+      <li>
+        <span class="dot warning"></span>
+        <span>Péremption</span>
+      </li>
+
+      <li>
+        <span class="dot low-stock"></span>
+        <span>Stock faible</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% endblock %} {% block js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}

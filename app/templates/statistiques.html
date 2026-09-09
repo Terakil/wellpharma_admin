@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}
+Statistiques - WellPharma
+{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/statistiques.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>
+            <i class="bi bi-bar-chart-line"></i>
+            Statistiques
+        </h2>
+        <p>Analyse de l'activité de WellPharma</p>
+    </div>
+
+<div class="period-selector">
+    <i class="bi bi-calendar3"></i>
+
+    <select id="periodFilter">
+        <option value="7">7 derniers jours</option>
+        <option value="30">30 derniers jours</option>
+        <option value="90">3 derniers mois</option>
+    </select>
+</div>
+
+</div>
+
+<!-- =================================================
+     INDICATEURS
+================================================== -->
+
+<div class="stats-summary">
+
+<div class="stat-card">
+    <div class="stat-icon revenue">
+        <i class="bi bi-cash-stack"></i>
+    </div>
+
+    <div>
+        <span>Chiffre d'affaires</span>
+
+        <strong>
+            {{ "{:,.0f}".format(stats.revenue).replace(",", " ") }} Ar
+        </strong>
+
+        <small class="positive">
+            <i class="bi bi-arrow-up"></i>
+            +12,5 %
+        </small>
+    </div>
+</div>
+
+
+<div class="stat-card">
+    <div class="stat-icon orders">
+        <i class="bi bi-cart-check"></i>
+    </div>
+
+    <div>
+        <span>Commandes</span>
+
+        <strong>
+            {{ stats.orders }}
+        </strong>
+
+        <small>
+            commandes traitées
+        </small>
+    </div>
+</div>
+
+
+<div class="stat-card">
+    <div class="stat-icon clients">
+        <i class="bi bi-people"></i>
+    </div>
+
+    <div>
+        <span>Clients</span>
+
+        <strong>
+            {{ stats.clients }}
+        </strong>
+
+        <small>
+            clients enregistrés
+        </small>
+    </div>
+</div>
+
+
+<div class="stat-card">
+    <div class="stat-icon basket">
+        <i class="bi bi-wallet2"></i>
+    </div>
+
+    <div>
+        <span>Panier moyen</span>
+
+        <strong>
+            {{ "{:,.0f}".format(stats.average_basket).replace(",", " ") }} Ar
+        </strong>
+
+        <small>
+            par commande
+        </small>
+    </div>
+</div>
+
+</div>
+
+<!-- =================================================
+     GRAPHIQUE CHIFFRE D'AFFAIRES
+================================================== -->
+
+<div class="chart-card large-chart">
+
+<div class="section-header">
+    <div>
+        <h5>
+            <i class="bi bi-graph-up-arrow"></i>
+            Évolution du chiffre d'affaires
+        </h5>
+
+        <span>
+            Chiffre d'affaires des 7 derniers jours
+        </span>
+    </div>
+
+    <div class="chart-legend">
+        <span class="legend-item">
+            <span class="legend-dot revenue-dot"></span>
+            Chiffre d'affaires
+        </span>
+    </div>
+</div>
+
+<div class="chart-container large">
+    <canvas id="revenueChart"></canvas>
+</div>
+
+</div>
+
+<!-- =================================================
+     DEUX GRAPHIQUES
+================================================== -->
+
+<div class="charts-grid">
+
+<!-- COMMANDES -->
+
+<div class="chart-card">
+
+    <div class="section-header">
+        <div>
+            <h5>
+                <i class="bi bi-cart-check"></i>
+                Commandes
+            </h5>
+
+            <span>
+                Nombre de commandes par jour
+            </span>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="ordersChart"></canvas>
+    </div>
+
+</div>
+
+
+<!-- MEILLEURES VENTES -->
+
+<div class="chart-card">
+
+    <div class="section-header">
+        <div>
+            <h5>
+                <i class="bi bi-trophy"></i>
+                Médicaments les plus vendus
+            </h5>
+
+            <span>
+                Produits les plus demandés
+            </span>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="bestSellersChart"></canvas>
+    </div>
+
+</div>
+
+</div>
+
+<!-- =================================================
+     ANALYSE
+================================================== -->
+
+<div class="analysis-card">
+
+<div class="section-header">
+    <div>
+        <h5>
+            <i class="bi bi-lightbulb"></i>
+            Analyse de l'activité
+        </h5>
+
+        <span>
+            Principaux indicateurs de la période
+        </span>
+    </div>
+</div>
+
+
+<div class="analysis-grid">
+
+    <div class="analysis-item">
+
+        <div class="analysis-icon">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+
+        <div>
+            <span>Meilleur jour</span>
+
+            <strong>
+                {{ analysis.best_day }}
+            </strong>
+
+            <small>
+                {{ analysis.best_day_revenue }}
+            </small>
+        </div>
+
+    </div>
+
+
+    <div class="analysis-item">
+
+        <div class="analysis-icon">
+            <i class="bi bi-trophy"></i>
+        </div>
+
+        <div>
+            <span>Produit le plus vendu</span>
+
+            <strong>
+                {{ analysis.best_product }}
+            </strong>
+
+            <small>
+                {{ analysis.best_product_quantity }} unités vendues
+            </small>
+        </div>
+
+    </div>
+
+
+    <div class="analysis-item">
+
+        <div class="analysis-icon">
+            <i class="bi bi-graph-up"></i>
+        </div>
+
+        <div>
+            <span>Évolution du CA</span>
+
+            <strong class="positive">
+                {{ analysis.revenue_evolution }}
+            </strong>
+
+            <small>
+                par rapport à la période précédente
+            </small>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script>
+    
+        window.revenueData = {{ revenue_data | tojson }};
+        window.ordersData = {{ orders_data | tojson }};
+        window.bestSellersData = {{ best_sellers | tojson }};
+
+        window.data7Days = {{ data_7_days | tojson }};
+        window.data30Days = {{ data_30_days | tojson }};
+        window.data3Months = {{ data_3_months | tojson }};
+
+
+</script>
+
+<script src="{{ url_for('static', filename='js/statistiques.js') }}"></script>
+
+{% endblock %}

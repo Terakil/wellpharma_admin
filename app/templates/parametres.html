@@ -1,0 +1,1134 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}Paramètres - WellPharma{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/parametres.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     EN-TÊTE DE LA PAGE
+===================================================== -->
+
+<div class="page-header">
+    <div>
+        <h2>
+            <i class="bi bi-gear"></i>
+            Paramètres
+        </h2>
+        <p>Configuration et gestion de votre espace WellPharma</p>
+    </div>
+</div>
+
+
+<!-- =====================================================
+     CONTENU DES PARAMÈTRES
+===================================================== -->
+
+<div class="settings-layout">
+
+    <!-- =================================================
+         MENU DES PARAMÈTRES
+    ================================================== -->
+
+    <aside class="settings-menu">
+
+        <div class="settings-menu-title">
+            Paramètres
+        </div>
+
+        <button class="settings-nav active" data-section="account" type="button">
+            <i class="bi bi-person"></i>
+            <span>Compte administrateur</span>
+        </button>
+
+        <button class="settings-nav" data-section="security" type="button">
+            <i class="bi bi-shield-lock"></i>
+            <span>Sécurité</span>
+        </button>
+
+        <button class="settings-nav" data-section="pharmacy" type="button">
+            <i class="bi bi-hospital"></i>
+            <span>Pharmacie</span>
+        </button>
+
+        <button class="settings-nav" data-section="management" type="button">
+            <i class="bi bi-sliders"></i>
+            <span>Gestion</span>
+        </button>
+
+        <button class="settings-nav" data-section="notifications" type="button">
+            <i class="bi bi-bell"></i>
+            <span>Notifications</span>
+        </button>
+
+        <button class="settings-nav" data-section="documents" type="button">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Documents</span>
+        </button>
+
+        <button class="settings-nav" data-section="payments" type="button">
+            <i class="bi bi-credit-card"></i>
+            <span>Paiements</span>
+        </button>
+
+        <button class="settings-nav" data-section="administration" type="button">
+            <i class="bi bi-person-gear"></i>
+            <span>Administration</span>
+        </button>
+
+        <button class="settings-nav" data-section="backup" type="button">
+            <i class="bi bi-database"></i>
+            <span>Sauvegarde</span>
+        </button>
+
+        <button class="settings-nav" data-section="about" type="button">
+            <i class="bi bi-info-circle"></i>
+            <span>À propos</span>
+        </button>
+
+    </aside>
+
+
+    <!-- =================================================
+         CONTENU DES SECTIONS
+    ================================================== -->
+
+    <div class="settings-content">
+
+
+        <!-- =================================================
+             1. COMPTE ADMINISTRATEUR
+        ================================================== -->
+
+    <form method="POST" action="{{ url_for('parametres.page_parametres') }}">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="adminName">Nom complet</label>
+                <input
+                    type="text"
+                    id="adminName"
+                    name="adminName"
+                    value="{{ profil.name }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="adminEmail">Adresse e-mail</label>
+                <input
+                    type="email"
+                    id="adminEmail"
+                    name="adminEmail"
+                    value="{{ profil.email }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="adminPhone">Téléphone</label>
+                <input
+                    type="text"
+                    id="adminPhone"
+                    name="adminPhone"
+                    value="{{ profil.phone or '' }}"
+                    placeholder="Ex : 034 00 000 00"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="adminRole">Rôle</label>
+                <input
+                    type="text"
+                    id="adminRole"
+                    value="{{ profil.role }}"
+                    disabled
+                >
+            </div>
+
+        </div>
+
+        <div class="card-actions">
+            <button
+                class="primary-btn"
+                type="submit"
+                id="saveAccountBtn"
+            >
+                <i class="bi bi-check-lg"></i>
+                Enregistrer les modifications
+            </button>
+        </div>
+
+    </form>
+        <!-- =================================================
+             2. SÉCURITÉ
+        ================================================== -->
+
+        <section class="settings-section" id="security">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+
+                <div>
+                    <h4>Sécurité</h4>
+                    <p>Protégez votre compte et vos accès</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+                        <label for="currentPassword">
+                            Mot de passe actuel
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                placeholder="Entrez votre mot de passe actuel"
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="currentPassword"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="newPassword">
+                            Nouveau mot de passe
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                placeholder="Nouveau mot de passe"
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="newPassword"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="confirmPassword">
+                            Confirmer le mot de passe
+                        </label>
+
+                        <div class="password-field">
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirmer le mot de passe"
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="confirmPassword"
+                            >
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="security-info">
+                    <i class="bi bi-info-circle"></i>
+                    <span>
+                        Utilisez un mot de passe d'au moins 8 caractères
+                        contenant des lettres et des chiffres.
+                    </span>
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button class="primary-btn" type="button" id="changePasswordBtn">
+                        <i class="bi bi-shield-check"></i>
+                        Modifier le mot de passe
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-card danger-card">
+
+                <div class="danger-content">
+
+                    <div>
+                        <h5>Déconnexion de tous les appareils</h5>
+                        <p>
+                            Déconnectez votre compte de toutes les sessions
+                            actuellement ouvertes.
+                        </p>
+                    </div>
+
+                    <button class="danger-btn" type="button" id="logoutAllBtn">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Déconnecter
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             3. PHARMACIE
+        ================================================== -->
+
+        <section class="settings-section" id="pharmacy">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-hospital"></i>
+                </div>
+
+                <div>
+                    <h4>Pharmacie</h4>
+                    <p>Informations générales de votre pharmacie</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="pharmacyName">
+                            Nom de la pharmacie
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pharmacyName"
+                            value="WellPharma"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="pharmacyPhone">
+                            Téléphone
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pharmacyPhone"
+                            placeholder="Numéro de téléphone"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="pharmacyEmail">
+                            Adresse e-mail
+                        </label>
+
+                        <input
+                            type="email"
+                            id="pharmacyEmail"
+                            placeholder="contact@wellpharma.com"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="pharmacyWebsite">
+                            Site web
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pharmacyWebsite"
+                            placeholder="www.wellpharma.com"
+                        >
+                    </div>
+
+
+                    <div class="form-group full">
+                        <label for="pharmacyAddress">
+                            Adresse
+                        </label>
+
+                        <textarea
+                            id="pharmacyAddress"
+                            rows="3"
+                            placeholder="Adresse complète de la pharmacie"
+                        ></textarea>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="pharmacyCity">
+                            Ville
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pharmacyCity"
+                            placeholder="Ville"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="pharmacyPostal">
+                            Code postal
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pharmacyPostal"
+                            placeholder="Code postal"
+                        >
+                    </div>
+
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button class="primary-btn" type="button" id="savePharmacyBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Enregistrer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             4. GESTION
+        ================================================== -->
+
+        <section class="settings-section" id="management">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-sliders"></i>
+                </div>
+
+                <div>
+                    <h4>Gestion</h4>
+                    <p>Configurez les règles de gestion de vos stocks</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="lowStockThreshold">
+                            Seuil de stock faible
+                        </label>
+
+                        <input
+                            type="number"
+                            id="lowStockThreshold"
+                            value="10"
+                            min="0"
+                        >
+
+                        <small>
+                            Une alerte sera générée lorsque le stock
+                            atteindra ce niveau.
+                        </small>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="expirationThreshold">
+                            Alerte péremption
+                        </label>
+
+                        <input
+                            type="number"
+                            id="expirationThreshold"
+                            value="30"
+                            min="1"
+                        >
+
+                        <small>
+                            Nombre de jours avant expiration pour générer
+                            une alerte.
+                        </small>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="currency">
+                            Devise
+                        </label>
+
+                        <select id="currency">
+                            <option value="MGA" selected>
+                                Ariary (MGA)
+                            </option>
+                            <option value="EUR">
+                                Euro (EUR)
+                            </option>
+                            <option value="USD">
+                                Dollar américain (USD)
+                            </option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="dateFormat">
+                            Format de date
+                        </label>
+
+                        <select id="dateFormat">
+                            <option value="dd/mm/yyyy" selected>
+                                JJ/MM/AAAA
+                            </option>
+                            <option value="yyyy-mm-dd">
+                                AAAA-MM-JJ
+                            </option>
+                            <option value="mm/dd/yyyy">
+                                MM/JJ/AAAA
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button class="primary-btn" type="button" id="saveManagementBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Enregistrer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             5. NOTIFICATIONS
+        ================================================== -->
+
+        <section class="settings-section" id="notifications">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-bell"></i>
+                </div>
+
+                <div>
+                    <h4>Notifications</h4>
+                    <p>Choisissez les notifications que vous souhaitez recevoir</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="toggle-item">
+
+                    <div>
+                        <strong>Rupture de stock</strong>
+                        <span>
+                            Recevoir une notification lorsqu'un médicament
+                            est en rupture.
+                        </span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="toggle-item">
+
+                    <div>
+                        <strong>Stock faible</strong>
+                        <span>
+                            Être averti lorsqu'un produit atteint le seuil
+                            de stock faible.
+                        </span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="toggle-item">
+
+                    <div>
+                        <strong>Nouvelles commandes</strong>
+                        <span>
+                            Recevoir une notification lors d'une nouvelle
+                            commande.
+                        </span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="toggle-item">
+
+                    <div>
+                        <strong>Péremption</strong>
+                        <span>
+                            Être averti lorsqu'un médicament approche
+                            de sa date d'expiration.
+                        </span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="toggle-item">
+
+                    <div>
+                        <strong>Nouvelles entrées de stock</strong>
+                        <span>
+                            Recevoir une notification lors de l'entrée
+                            de nouveaux produits.
+                        </span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button class="primary-btn" type="button" id="saveNotificationsBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Enregistrer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             6. DOCUMENTS
+        ================================================== -->
+
+        <section class="settings-section" id="documents">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+
+                <div>
+                    <h4>Documents</h4>
+                    <p>Configuration des documents et factures</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="invoicePrefix">
+                            Préfixe des factures
+                        </label>
+
+                        <input
+                            type="text"
+                            id="invoicePrefix"
+                            value="WP-"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="invoiceStart">
+                            Numéro de départ
+                        </label>
+
+                        <input
+                            type="number"
+                            id="invoiceStart"
+                            value="1"
+                            min="1"
+                        >
+                    </div>
+
+
+                    <div class="form-group full">
+                        <label for="documentFooter">
+                            Pied de page des documents
+                        </label>
+
+                        <textarea
+                            id="documentFooter"
+                            rows="4"
+                            placeholder="Texte affiché au bas des documents"
+                        >Merci pour votre confiance.</textarea>
+                    </div>
+
+                </div>
+
+
+                <div class="toggle-item">
+
+                    <div>
+                        <strong>Afficher le logo sur les documents</strong>
+                        <span>
+                            Le logo WellPharma sera affiché sur les factures
+                            et documents générés.
+                        </span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button class="primary-btn" type="button" id="saveDocumentsBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Enregistrer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             7. PAIEMENTS
+        ================================================== -->
+
+        <section class="settings-section" id="payments">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-credit-card"></i>
+                </div>
+
+                <div>
+                    <h4>Paiements</h4>
+                    <p>Gérez les moyens de paiement acceptés</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+
+                <div class="payment-method">
+
+                    <div class="payment-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+
+                    <div>
+                        <strong>Espèces</strong>
+                        <span>Paiement en espèces au comptoir</span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="payment-method">
+
+                    <div class="payment-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+
+                    <div>
+                        <strong>MVola</strong>
+                        <span>Paiement mobile MVola</span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="payment-method">
+
+                    <div class="payment-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+
+                    <div>
+                        <strong>Orange Money</strong>
+                        <span>Paiement mobile Orange Money</span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="payment-method">
+
+                    <div class="payment-icon">
+                        <i class="bi bi-phone"></i>
+                    </div>
+
+                    <div>
+                        <strong>Airtel Money</strong>
+                        <span>Paiement mobile Airtel Money</span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="payment-method">
+
+                    <div class="payment-icon">
+                        <i class="bi bi-credit-card"></i>
+                    </div>
+
+                    <div>
+                        <strong>Carte bancaire</strong>
+                        <span>Paiement par carte bancaire</span>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+
+                </div>
+
+
+                <div class="card-actions">
+
+                    <button class="primary-btn" type="button" id="savePaymentsBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Enregistrer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             8. ADMINISTRATION
+        ================================================== -->
+
+        <section class="settings-section" id="administration">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-person-gear"></i>
+                </div>
+
+                <div>
+                    <h4>Administration</h4>
+                    <p>Informations et droits d'administration</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="admin-info">
+
+                    <div class="admin-row">
+                        <span>Nom du système</span>
+                        <strong>WellPharma</strong>
+                    </div>
+
+                    <div class="admin-row">
+                        <span>Version</span>
+                        <strong>2.0.0</strong>
+                    </div>
+
+                    <div class="admin-row">
+                        <span>Type de compte</span>
+                        <span class="access-badge">
+                            Administrateur
+                        </span>
+                    </div>
+
+                    <div class="admin-row">
+                        <span>Dernière connexion</span>
+                        <strong>Session actuelle</strong>
+                    </div>
+
+                    <div class="admin-row">
+                        <span>Base de données</span>
+                        <strong>Connectée</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             9. SAUVEGARDE
+        ================================================== -->
+
+        <section class="settings-section" id="backup">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-database"></i>
+                </div>
+
+                <div>
+                    <h4>Sauvegarde</h4>
+                    <p>Sauvegardez et restaurez vos données</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="backup-status">
+
+                    <div class="backup-icon">
+                        <i class="bi bi-cloud-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>Dernière sauvegarde</strong>
+                        <span>
+                            Aucune sauvegarde récente
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="backup-actions">
+
+                    <button
+                        class="primary-btn"
+                        type="button"
+                        id="backupBtn"
+                    >
+                        <i class="bi bi-download"></i>
+                        Sauvegarder maintenant
+                    </button>
+
+                    <button
+                        class="secondary-btn"
+                        type="button"
+                        id="restoreBtn"
+                    >
+                        <i class="bi bi-upload"></i>
+                        Restaurer
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             10. À PROPOS
+        ================================================== -->
+
+        <section class="settings-section" id="about">
+
+            <div class="section-title">
+
+                <div class="section-icon">
+                    <i class="bi bi-info-circle"></i>
+                </div>
+
+                <div>
+                    <h4>À propos</h4>
+                    <p>Informations sur WellPharma</p>
+                </div>
+
+            </div>
+
+
+            <div class="settings-card about-card">
+
+                <div class="about-logo">
+
+                    <img
+                        src="{{ url_for('static', filename='images/logo_wellpharma.png.jpeg') }}"
+                        alt="WellPharma"
+                    >
+
+                </div>
+
+
+                <h3>WellPharma</h3>
+
+                <p>
+                    Solution de gestion et de suivi d'une pharmacie
+                </p>
+
+                <span class="version">
+                    Version 2.0.0
+                </span>
+
+
+                <div class="about-info">
+
+                    <span>Développé dans le cadre de</span>
+                    <strong>ISPM</strong>
+
+                </div>
+
+                <div class="about-info">
+
+                    <span>Année</span>
+                    <strong>2026</strong>
+
+                </div>
+
+                <div class="about-info">
+
+                    <span>Application</span>
+                    <strong>Gestion de pharmacie</strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     NOTIFICATION
+===================================================== -->
+
+<div
+    class="settings-notification"
+    id="settingsNotification"
+>
+    <i class="bi bi-check-circle"></i>
+    <span id="settingsNotificationText">
+        Modification enregistrée avec succès.
+    </span>
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/parametres.js') }}"></script>
+{% endblock %}
+```

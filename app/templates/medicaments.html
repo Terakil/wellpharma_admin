@@ -1,0 +1,1024 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}
+Médicaments - WellPharma
+{% endblock %}
+
+
+{% block css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/medicaments.css') }}"
+>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     HEADER DE LA PAGE
+====================================================== -->
+
+<div class="page-header">
+
+    <div class="page-header-left">
+
+        <div class="page-header-icon">
+
+            <i class="bi bi-capsule"></i>
+
+        </div>
+
+        <div>
+
+            <h1>
+                Médicaments
+            </h1>
+
+            <p>
+                Gestion des médicaments et du stock
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="btn-add-medicine"
+        data-bs-toggle="modal"
+        data-bs-target="#addMedicineModal"
+    >
+
+        <i class="bi bi-plus-lg"></i>
+
+        Ajouter un médicament
+
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     BARRE DE RECHERCHE ET FILTRES
+====================================================== -->
+
+<div class="medicine-toolbar">
+
+
+    <!-- RECHERCHE -->
+
+    <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+            type="text"
+            id="medicineSearch"
+            placeholder="Rechercher un médicament..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <!-- CATÉGORIE -->
+
+    <select id="categoryFilter">
+
+        <option value="">
+            Toutes les catégories
+        </option>
+
+        <option value="Antalgique">
+            Antalgique
+        </option>
+
+        <option value="Antibiotique">
+            Antibiotique
+        </option>
+
+        <option value="Anti-inflammatoire">
+            Anti-inflammatoire
+        </option>
+
+        <option value="Antiseptique">
+            Antiseptique
+        </option>
+
+        <option value="Cardiovasculaire">
+            Cardiovasculaire
+        </option>
+
+        <option value="Dermatologique">
+            Dermatologique
+        </option>
+
+        <option value="Digestif">
+            Digestif
+        </option>
+
+        <option value="Autre">
+            Autre
+        </option>
+
+    </select>
+
+
+    <!-- STOCK -->
+
+    <select id="stockFilter">
+
+        <option value="">
+            Tous les stocks
+        </option>
+
+        <option value="available">
+            En stock
+        </option>
+
+        <option value="low">
+            Stock faible
+        </option>
+
+        <option value="out">
+            Rupture
+        </option>
+
+    </select>
+
+</div>
+
+
+
+<!-- =====================================================
+     CARTES RÉSUMÉ
+====================================================== -->
+
+<div class="medicine-summary">
+
+
+    <!-- TOTAL -->
+
+    <div class="medicine-summary-card">
+
+        <div class="summary-icon total">
+
+            <i class="bi bi-capsule"></i>
+
+        </div>
+
+        <div class="summary-content">
+
+            <div class="summary-label">
+                Total médicaments
+            </div>
+
+            <div
+                class="summary-value"
+                id="totalMedicines"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- EN STOCK -->
+
+    <div class="medicine-summary-card">
+
+        <div class="summary-icon stock">
+
+            <i class="bi bi-box-seam"></i>
+
+        </div>
+
+        <div class="summary-content">
+
+            <div class="summary-label">
+                En stock
+            </div>
+
+            <div
+                class="summary-value"
+                id="inStockCount"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- STOCK FAIBLE -->
+
+    <div class="medicine-summary-card">
+
+        <div class="summary-icon low">
+
+            <i class="bi bi-exclamation-triangle"></i>
+
+        </div>
+
+        <div class="summary-content">
+
+            <div class="summary-label">
+                Stock faible
+            </div>
+
+            <div
+                class="summary-value"
+                id="lowStockCount"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- RUPTURE -->
+
+    <div class="medicine-summary-card">
+
+        <div class="summary-icon out">
+
+            <i class="bi bi-x-circle"></i>
+
+        </div>
+
+        <div class="summary-content">
+
+            <div class="summary-label">
+                Rupture
+            </div>
+
+            <div
+                class="summary-value"
+                id="outOfStockCount"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TABLEAU DES MÉDICAMENTS
+====================================================== -->
+
+<div class="medicine-table-box">
+
+
+    <!-- HEADER TABLEAU -->
+
+    <div class="table-header">
+
+        <div>
+
+            <h2>
+                Liste des médicaments
+            </h2>
+
+            <span>
+                Gestion et suivi du stock
+            </span>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- TABLEAU -->
+
+    <div class="table-responsive">
+
+        <table class="medicine-table">
+
+
+            <!-- EN-TÊTE -->
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Médicament
+                    </th>
+
+                    <th>
+                        Catégorie
+                    </th>
+
+                    <th>
+                        Prix unitaire
+                    </th>
+
+                    <th>
+                        Stock
+                    </th>
+
+                    <th>
+                        Péremption
+                    </th>
+
+                    <th>
+                        Fournisseur
+                    </th>
+
+                    <th>
+                        Ordonnance
+                    </th>
+
+                    <th>
+                        Image
+                    </th>
+
+                    <th>
+                        Statut
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <!-- CORPS -->
+
+            <tbody id="medicineTableBody">
+
+
+                {% if medicines %}
+
+
+                    {% for medicine in medicines %}
+
+
+                    <tr
+                        class="medicine-row"
+
+                        data-name="{{ medicine.name|lower }}"
+
+                        data-category="{{ medicine.category|lower }}"
+
+                        data-quantity="{{ medicine.quantity }}"
+                    >
+
+
+                        <!-- ID -->
+
+                        <td>
+                            #{{ medicine.id }}
+                        </td>
+
+
+
+                        <!-- MÉDICAMENT -->
+
+                        <td>
+
+                            <div class="medicine-name">
+
+                                <div class="medicine-icon">
+
+                                    <i class="bi bi-capsule"></i>
+
+                                </div>
+
+                                <span>
+                                    {{ medicine.name }}
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+
+                        <!-- CATÉGORIE -->
+
+                        <td>
+                            {{ medicine.category }}
+                        </td>
+
+
+
+                        <!-- PRIX -->
+
+                        <td>
+
+                            {{ "%.2f"|format(medicine.price) }}
+                            Ar
+
+                        </td>
+
+
+
+                        <!-- STOCK -->
+
+                        <td>
+                            {{ medicine.quantity }}
+                        </td>
+
+
+
+                        <!-- PÉREMPTION -->
+
+                        <td>
+
+                            {% if medicine.expiration_date %}
+
+                                {{ medicine.expiration_date }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- FOURNISSEUR -->
+
+                        <td>
+
+                            {% if medicine.supplier %}
+
+                                {{ medicine.supplier }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- ORDONNANCE -->
+
+                        <td>
+
+                            {% if medicine.info and medicine.info.requires_prescription %}
+
+                                <span class="stock-badge faible">
+                                    Oui
+                                </span>
+
+                            {% else %}
+
+                                <span class="stock-badge disponible">
+                                    Non
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- IMAGE -->
+
+                        <td>
+
+                            {% set medicine_image = medicine.image_url_value or medicine.image %}
+
+                            {% if medicine_image %}
+
+                                <img
+                                    src="{{ medicine_image }}"
+                                    alt="{{ medicine.name }}"
+                                    style="width: 42px; height: 42px; object-fit: cover; border-radius: 8px;"
+                                    onerror="this.style.display='none'"
+                                >
+
+                            {% else %}
+
+                                <span>—</span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- STATUT -->
+
+                        <td>
+
+                            {% if medicine.quantity == 0 %}
+
+                                <span class="stock-badge rupture">
+
+                                    Rupture
+
+                                </span>
+
+
+                            {% elif medicine.quantity <= 10 %}
+
+                                <span class="stock-badge faible">
+
+                                    Stock faible
+
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="stock-badge disponible">
+
+                                    Disponible
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+
+                                <!-- VOIR -->
+
+                                <button
+                                    type="button"
+                                    class="action-btn view"
+                                    title="Voir"
+                                >
+
+                                    <i class="bi bi-eye"></i>
+
+                                </button>
+
+
+
+                                <!-- MODIFIER -->
+
+                                <button
+                                    type="button"
+                                    class="action-btn edit"
+                                    title="Modifier"
+                                >
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+
+
+                                <!-- SUPPRIMER -->
+
+                                <button
+                                    type="button"
+                                    class="action-btn delete"
+                                    title="Supprimer"
+                                >
+
+                                    <i class="bi bi-trash"></i>
+
+                                </button>
+
+
+                            </div>
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                {% else %}
+
+
+                    <!-- AUCUN MÉDICAMENT -->
+
+                    <tr>
+
+                        <td colspan="9">
+
+                            <div class="empty-state">
+
+                                <i class="bi bi-capsule"></i>
+
+                                <p>
+                                    Aucun médicament enregistré.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                {% endif %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MODAL : AJOUTER UN MÉDICAMENT
+====================================================== -->
+
+<div
+    class="modal fade"
+    id="addMedicineModal"
+    tabindex="-1"
+    aria-labelledby="addMedicineModalLabel"
+    aria-hidden="true"
+>
+
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+
+        <div class="modal-content">
+
+
+            <!-- HEADER MODAL -->
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="addMedicineModalLabel"
+                >
+                    Ajouter un médicament
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fermer"
+                ></button>
+
+            </div>
+
+
+
+            <!-- FORMULAIRE -->
+
+            <form
+                method="POST"
+                action="{{ url_for('medicaments.ajouter_medicament') }}"
+            >
+
+
+                <div class="modal-body">
+
+
+                    <div class="row g-3">
+
+
+                        <!-- NOM -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="name"
+                                class="form-label"
+                            >
+                                Nom du médicament
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="name"
+                                name="name"
+                                placeholder="Ex : Paracétamol"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- CATÉGORIE -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="category"
+                                class="form-label"
+                            >
+                                Catégorie
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="category"
+                                name="category"
+                                required
+                            >
+
+                                <option value="">
+                                    Sélectionner une catégorie
+                                </option>
+
+                                <option value="Antalgique">
+                                    Antalgique
+                                </option>
+
+                                <option value="Antibiotique">
+                                    Antibiotique
+                                </option>
+
+                                <option value="Anti-inflammatoire">
+                                    Anti-inflammatoire
+                                </option>
+
+                                <option value="Antiseptique">
+                                    Antiseptique
+                                </option>
+
+                                <option value="Cardiovasculaire">
+                                    Cardiovasculaire
+                                </option>
+
+                                <option value="Dermatologique">
+                                    Dermatologique
+                                </option>
+
+                                <option value="Digestif">
+                                    Digestif
+                                </option>
+
+                                <option value="Autre">
+                                    Autre
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- PRIX -->
+
+                        <div class="col-md-4">
+
+                            <label
+                                for="price"
+                                class="form-label"
+                            >
+                                Prix unitaire
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="0.01"
+                                placeholder="0"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- QUANTITÉ -->
+
+                        <div class="col-md-4">
+
+                            <label
+                                for="quantity"
+                                class="form-label"
+                            >
+                                Quantité
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="quantity"
+                                name="quantity"
+                                min="0"
+                                placeholder="0"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <!-- DATE DE PÉREMPTION -->
+
+                        <div class="col-md-4">
+
+                            <label
+                                for="expiration_date"
+                                class="form-label"
+                            >
+                                Date de péremption
+                            </label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="expiration_date"
+                                name="expiration_date"
+                            >
+
+                        </div>
+
+
+
+                        <!-- FOURNISSEUR -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="supplier"
+                                class="form-label"
+                            >
+                                Fournisseur
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="supplier"
+                                name="supplier"
+                                placeholder="Nom du fournisseur"
+                            >
+
+                        </div>
+
+
+
+                        <!-- ORDONNANCE -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="requires_prescription"
+                                class="form-label"
+                            >
+                                Nécessite une ordonnance
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="requires_prescription"
+                                name="requires_prescription"
+                            >
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- LIEN DE L'IMAGE -->
+
+                        <div class="col-md-12">
+
+                            <label
+                                for="image_url"
+                                class="form-label"
+                            >
+                                Lien de l’image
+                            </label>
+
+                            <input
+                                type="url"
+                                class="form-control"
+                                id="image_url"
+                                name="image_url"
+                                placeholder="https://example.com/medicament.jpg"
+                            >
+
+                        </div>
+
+
+
+                        <!-- DESCRIPTION -->
+
+                        <div class="col-md-12">
+
+                            <label
+                                for="description"
+                                class="form-label"
+                            >
+                                Description
+                            </label>
+
+                            <textarea
+                                class="form-control"
+                                id="description"
+                                name="description"
+                                placeholder="Description du médicament..."
+                            ></textarea>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FOOTER MODAL -->
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        data-bs-dismiss="modal"
+                    >
+                        Annuler
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn-save"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Enregistrer
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{% block js %}
+
+<script
+    src="{{ url_for('static', filename='js/medicaments.js') }}"
+></script>
+
+{% endblock %}
+```

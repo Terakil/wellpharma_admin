@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block title %}Rapports - WellPharma{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rapports.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>
+            <i class="bi bi-file-earmark-text"></i>
+            Rapports
+        </h2>
+        <p>Génération et consultation des rapports</p>
+    </div>
+
+
+
+<button class="btn btn-success" id="generateReportBtn" type="button">
+    <i class="bi bi-file-earmark-plus"></i>
+    Générer un rapport
+</button>
+
+
+
+
+</div>
+
+<div class="report-summary">
+
+<div class="report-card">
+    <div class="report-icon green">
+        <i class="bi bi-files"></i>
+    </div>
+
+    <div>
+        <span>Rapports générés</span>
+        <strong>{{ stats.total_reports }}</strong>
+        <small>rapports disponibles</small>
+    </div>
+</div>
+
+
+<div class="report-card">
+    <div class="report-icon blue">
+        <i class="bi bi-graph-up"></i>
+    </div>
+
+    <div>
+        <span>Rapports de ventes</span>
+        <strong>{{ stats.sales_reports }}</strong>
+        <small>rapports</small>
+    </div>
+</div>
+
+
+<div class="report-card">
+    <div class="report-icon orange">
+        <i class="bi bi-box-seam"></i>
+    </div>
+
+    <div>
+        <span>Rapports de stocks</span>
+        <strong>{{ stats.stock_reports }}</strong>
+        <small>rapports</small>
+    </div>
+</div>
+
+
+<div class="report-card">
+    <div class="report-icon purple">
+        <i class="bi bi-cart-check"></i>
+    </div>
+
+    <div>
+        <span>Rapports commandes</span>
+        <strong>{{ stats.order_reports }}</strong>
+        <small>rapports</small>
+    </div>
+</div>
+
+</div>
+
+<div class="generation-box">
+
+<div class="section-title">
+    <div>
+        <h5>
+            <i class="bi bi-sliders"></i>
+            Générer un rapport
+        </h5>
+
+        <span>
+            Sélectionnez le type et la période du rapport
+        </span>
+    </div>
+</div>
+
+
+<div class="generation-form">
+
+    <div class="form-group">
+        <label for="reportType">
+            Type de rapport
+        </label>
+
+        <select id="reportType" class="form-select">
+            <option value="">
+                Sélectionner un rapport
+            </option>
+
+            <option value="ventes">
+                Rapport des ventes
+            </option>
+
+            <option value="stocks">
+                Rapport des stocks
+            </option>
+
+            <option value="commandes">
+                Rapport des commandes
+            </option>
+
+            <option value="clients">
+                Rapport des clients
+            </option>
+
+            <option value="medicaments">
+                Rapport des médicaments
+            </option>
+        </select>
+    </div>
+
+
+    <div class="form-group">
+        <label for="reportPeriod">
+            Période
+        </label>
+
+        <select id="reportPeriod" class="form-select">
+            <option value="today">
+                Aujourd'hui
+            </option>
+
+            <option value="7days">
+                7 derniers jours
+            </option>
+
+            <option value="30days">
+                30 derniers jours
+            </option>
+
+            <option value="month">
+                Ce mois
+            </option>
+
+            <option value="custom">
+                Période personnalisée
+            </option>
+        </select>
+    </div>
+
+
+    <div class="custom-dates" id="customDates">
+
+        <div class="form-group">
+            <label for="startDate">
+                Du
+            </label>
+
+            <input
+                type="date"
+                id="startDate"
+                class="form-control"
+            >
+        </div>
+
+
+        <div class="form-group">
+            <label for="endDate">
+                Au
+            </label>
+
+            <input
+                type="date"
+                id="endDate"
+                class="form-control"
+            >
+        </div>
+
+    </div>
+
+
+    <button
+        class="create-btn"
+        id="createReportBtn"
+        type="button"
+    >
+        <i class="bi bi-file-earmark-bar-graph"></i>
+        Créer le rapport
+    </button>
+
+</div>
+
+</div>
+
+<div class="reports-box">
+
+
+<div class="table-header">
+
+    <div>
+        <h5>
+            <i class="bi bi-clock-history"></i>
+            Rapports récents
+        </h5>
+
+        <span>
+            {{ reports|length }} rapport(s)
+        </span>
+    </div>
+
+
+    <div class="table-actions">
+
+        <button
+            class="filter-btn"
+            id="reportFilterBtn"
+            type="button"
+        >
+            <i class="bi bi-funnel"></i>
+            Filtrer
+        </button>
+
+        <button
+            class="reset-btn"
+            id="resetReports"
+            type="button"
+        >
+            <i class="bi bi-arrow-clockwise"></i>
+            Réinitialiser
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="report-toolbar">
+
+    <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+            type="text"
+            id="reportSearch"
+            placeholder="Rechercher un rapport..."
+        >
+
+    </div>
+
+
+    <select
+        id="typeFilter"
+        class="filter-select"
+    >
+        <option value="">
+            Tous les types
+        </option>
+
+        <option value="ventes">
+            Ventes
+        </option>
+
+        <option value="stocks">
+            Stocks
+        </option>
+
+        <option value="commandes">
+            Commandes
+        </option>
+
+        <option value="clients">
+            Clients
+        </option>
+
+        <option value="medicaments">
+            Médicaments
+        </option>
+    </select>
+
+</div>
+
+
+<div class="table-responsive">
+
+    <table class="report-table">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Rapport</th>
+                <th>Type</th>
+                <th>Période</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+
+        <tbody id="reportTableBody">
+
+            {% for report in reports %}
+
+            <tr
+                class="report-row"
+                data-name="{{ report.name|lower }}"
+                data-type="{{ report.type|lower }}"
+            >
+
+                <td>
+                    #{{ report.id }}
+                </td>
+
+
+                <td>
+
+                    <div class="report-name">
+
+                        <div class="document-icon">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+
+                        <div>
+                            <strong>
+                                {{ report.name }}
+                            </strong>
+
+                            <small>
+                                WellPharma
+                            </small>
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+                    <span class="type-badge">
+                        {{ report.type }}
+                    </span>
+                </td>
+
+
+                <td>
+                    {{ report.period }}
+                </td>
+
+
+                <td>
+                    {{ report.date }}
+                </td>
+
+
+                <td>
+                    <span class="status-badge">
+                        <i class="bi bi-check-circle"></i>
+                        {{ report.status }}
+                    </span>
+                </td>
+
+
+                <td>
+
+                    <div class="action-buttons">
+
+                        <button
+                            class="action-btn view"
+                            title="Voir"
+                            data-id="{{ report.id }}"
+                            type="button"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+
+                        <button
+                            class="action-btn download"
+                            title="Télécharger"
+                            data-id="{{ report.id }}"
+                            type="button"
+                        >
+                            <i class="bi bi-download"></i>
+                        </button>
+
+
+                        <button
+                            class="action-btn delete"
+                            title="Supprimer"
+                            data-id="{{ report.id }}"
+                            type="button"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+
+            <tr
+                id="emptyReports"
+                class="empty-state"
+                style="display: none;"
+            >
+
+                <td colspan="7">
+
+                    <i class="bi bi-file-earmark-x"></i>
+
+                    <h5>
+                        Aucun rapport trouvé
+                    </h5>
+
+                    <p>
+                        Aucun rapport ne correspond à votre recherche.
+                    </p>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/rapports.js') }}"></script>
+
+{% endblock %}

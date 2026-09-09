@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}
+Clients - WellPharma
+{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/clients.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>
+            <i class="bi bi-people"></i>
+            Clients
+        </h2>
+        <p>Gestion des clients de la pharmacie</p>
+    </div>
+
+<button
+    type="button"
+    class="add-client-btn"
+    id="addClientBtn"
+>
+    <i class="bi bi-person-plus"></i>
+    Ajouter un client
+</button>
+
+</div>
+
+<!-- ================================
+     RÉSUMÉ
+================================= -->
+
+<div class="client-summary">
+
+<div class="client-card">
+    <div class="client-card-icon green">
+        <i class="bi bi-people"></i>
+    </div>
+
+    <div>
+        <span>Total clients</span>
+        <strong id="totalClients">
+            {{ clients|length }}
+        </strong>
+    </div>
+</div>
+
+<div class="client-card">
+    <div class="client-card-icon blue">
+        <i class="bi bi-person-check"></i>
+    </div>
+
+    <div>
+        <span>Clients actifs</span>
+        <strong id="activeClients">
+            {{ clients|selectattr("status", "equalto", "Actif")|list|length }}
+        </strong>
+    </div>
+</div>
+
+<div class="client-card">
+    <div class="client-card-icon orange">
+        <i class="bi bi-person-dash"></i>
+    </div>
+
+    <div>
+        <span>Clients inactifs</span>
+        <strong id="inactiveClients">
+            {{ clients|selectattr("status", "equalto", "Inactif")|list|length }}
+        </strong>
+    </div>
+</div>
+
+<div class="client-card">
+    <div class="client-card-icon purple">
+        <i class="bi bi-cart-check"></i>
+    </div>
+
+    <div>
+        <span>Commandes</span>
+        <strong>
+            {{ clients|sum(attribute="orders") }}
+        </strong>
+    </div>
+</div>
+
+</div>
+
+<!-- ================================
+     RECHERCHE ET FILTRE
+================================= -->
+
+<div class="client-toolbar">
+
+<div class="search-box">
+    <i class="bi bi-search"></i>
+
+    <input
+        type="text"
+        id="clientSearch"
+        placeholder="Rechercher un client..."
+    >
+</div>
+
+<select
+    id="statusFilter"
+    class="filter-select"
+>
+    <option value="">Tous les clients</option>
+    <option value="actif">Actifs</option>
+    <option value="inactif">Inactifs</option>
+</select>
+
+</div>
+
+<!-- ================================
+     TABLE CLIENTS
+================================= -->
+
+<div class="client-table-box">
+
+<div class="table-header">
+
+    <div>
+        <h5>
+            <i class="bi bi-list-ul"></i>
+            Liste des clients
+        </h5>
+
+        <span id="clientCount">
+            {{ clients|length }} client(s)
+        </span>
+    </div>
+
+    <button
+        type="button"
+        class="view-all-btn"
+        id="viewAllClients"
+    >
+        Voir tout
+        <i class="bi bi-arrow-right"></i>
+    </button>
+
+</div>
+
+<div class="table-responsive">
+
+    <table class="client-table">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Commandes</th>
+                <th>Total dépensé</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody id="clientTableBody">
+
+            {% for client in clients %}
+
+            <tr
+                class="client-row"
+                data-name="{{ client.name|lower }}"
+                data-email="{{ client.email|lower }}"
+                data-status="{{ client.status|lower }}"
+            >
+
+                <td>
+                    <span class="reference">
+                        #{{ client.id }}
+                    </span>
+                </td>
+
+                <td>
+                    <div class="client-name">
+
+                        <div class="client-avatar">
+                            {{ client.name[0] }}
+                        </div>
+
+                        <div>
+                            <strong>
+                                {{ client.name }}
+                            </strong>
+                        </div>
+
+                    </div>
+                </td>
+
+                <td>
+                    <span class="client-email">
+                        {{ client.email }}
+                    </span>
+                </td>
+
+                <td>
+                    {{ client.phone }}
+                </td>
+
+                <td>
+                    <strong class="quantity">
+                        {{ client.orders }}
+                    </strong>
+                </td>
+
+                <td>
+                    <strong class="amount">
+                        {{ client.total }}
+                    </strong>
+                </td>
+
+                <td>
+
+                    {% if client.status == "Actif" %}
+
+                    <span class="status-badge active">
+                        <i class="bi bi-check-circle"></i>
+                        Actif
+                    </span>
+
+                    {% else %}
+
+                    <span class="status-badge inactive">
+                        <i class="bi bi-dash-circle"></i>
+                        Inactif
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            title="Voir"
+                        >
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn edit"
+                            title="Modifier"
+                        >
+                            <i class="bi bi-pencil"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn delete"
+                            title="Supprimer"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            <tr
+                id="emptyClient"
+                class="empty-state"
+                style="display: none;"
+            >
+                <td colspan="8">
+
+                    <i class="bi bi-people"></i>
+
+                    <h5>Aucun client trouvé</h5>
+
+                    <p>
+                        Aucun client ne correspond aux critères de recherche.
+                    </p>
+
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/clients.js') }}"></script>
+
+{% endblock %}

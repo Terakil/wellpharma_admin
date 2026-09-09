@@ -1,0 +1,845 @@
+{% extends "base.html" %}
+
+{% block title %}Fournisseurs - WellPharma{% endblock %}
+
+{% block css %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fournisseurs.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ========================= -->
+
+<!-- EN-TÊTE DE LA PAGE -->
+
+<!-- ========================= -->
+
+<div class="page-header">
+
+<div>
+
+    <h2>
+        <i class="bi bi-truck"></i>
+        Fournisseurs
+    </h2>
+
+    <p>
+        Gestion des fournisseurs et suivi des approvisionnements
+    </p>
+
+</div>
+
+
+<button
+    class="btn btn-success"
+    id="addSupplierBtn"
+    type="button">
+
+    <i class="bi bi-plus-lg"></i>
+    Ajouter un fournisseur
+
+</button>
+
+</div>
+
+<!-- ========================= -->
+
+<!-- CARTES STATISTIQUES -->
+
+<!-- ========================= -->
+
+<div class="supplier-summary">
+
+<div class="supplier-card">
+
+    <div class="supplier-card-icon green">
+        <i class="bi bi-truck"></i>
+    </div>
+
+    <div>
+        <span class="supplier-card-label">
+            Total fournisseurs
+        </span>
+
+        <strong>
+            {{ stats.total }}
+        </strong>
+    </div>
+
+</div>
+
+
+<div class="supplier-card">
+
+    <div class="supplier-card-icon blue">
+        <i class="bi bi-check-circle"></i>
+    </div>
+
+    <div>
+        <span class="supplier-card-label">
+            Fournisseurs actifs
+        </span>
+
+        <strong>
+            {{ stats.active }}
+        </strong>
+    </div>
+
+</div>
+
+
+<div class="supplier-card">
+
+    <div class="supplier-card-icon orange">
+        <i class="bi bi-clock"></i>
+    </div>
+
+    <div>
+        <span class="supplier-card-label">
+            Commandes en attente
+        </span>
+
+        <strong>
+            {{ stats.pending }}
+        </strong>
+    </div>
+
+</div>
+
+
+<div class="supplier-card">
+
+    <div class="supplier-card-icon purple">
+        <i class="bi bi-calendar-event"></i>
+    </div>
+
+    <div>
+        <span class="supplier-card-label">
+            Arrivages prévus
+        </span>
+
+        <strong>
+            {{ stats.upcoming }}
+        </strong>
+    </div>
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+
+<!-- BARRE DE RECHERCHE / FILTRES -->
+
+<!-- ========================= -->
+
+<div class="supplier-toolbar">
+
+<div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input
+        type="text"
+        id="supplierSearch"
+        placeholder="Rechercher un fournisseur...">
+
+</div>
+
+
+<select
+    id="statusFilter"
+    class="filter-select">
+
+    <option value="">
+        Tous les statuts
+    </option>
+
+    <option value="actif">
+        Actif
+    </option>
+
+    <option value="attente">
+        Commande en attente
+    </option>
+
+    <option value="retard">
+        En retard
+    </option>
+
+</select>
+
+
+<select
+    id="sortFilter"
+    class="filter-select">
+
+    <option value="">
+        Trier par
+    </option>
+
+    <option value="name">
+        Nom
+    </option>
+
+    <option value="arrival">
+        Date d'arrivée
+    </option>
+
+    <option value="delay">
+        Délai de livraison
+    </option>
+
+</select>
+
+</div>
+
+<!-- ========================= -->
+
+<!-- TABLEAU DES FOURNISSEURS -->
+
+<!-- ========================= -->
+
+<div class="supplier-table-box">
+
+<div class="table-header">
+
+    <div>
+
+        <h5>
+            Liste des fournisseurs
+        </h5>
+
+        <span id="supplierCount">
+            {{ suppliers|length }} fournisseur(s)
+        </span>
+
+    </div>
+
+
+    <button
+        type="button"
+        id="resetFilters"
+        class="reset-btn">
+
+        <i class="bi bi-arrow-counterclockwise"></i>
+        Réinitialiser
+
+    </button>
+
+</div>
+
+
+<div class="table-responsive">
+
+    <table class="table supplier-table">
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Fournisseur</th>
+
+                <th>Contact</th>
+
+                <th>Médicaments</th>
+
+                <th>Dernière commande</th>
+
+                <th>Arrivée</th>
+
+                <th>Délai</th>
+
+                <th>Montant</th>
+
+                <th>Statut</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody id="supplierTableBody">
+
+            {% for supplier in suppliers %}
+
+            <tr
+                class="supplier-row"
+                data-name="{{ supplier.name|lower }}"
+                data-status="{{ supplier.status|lower }}"
+                data-arrival="{{ supplier.arrival_date }}"
+                data-delay="{{ supplier.delivery_delay }}">
+
+                <td>
+
+                    <span class="supplier-id">
+                        #{{ supplier.id }}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <div class="supplier-name">
+
+                        <div class="supplier-icon">
+                            <i class="bi bi-building"></i>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                {{ supplier.name }}
+                            </strong>
+
+                            <small>
+                                {{ supplier.city }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="contact-info">
+
+                        <strong>
+                            {{ supplier.contact }}
+                        </strong>
+
+                        <small>
+                            {{ supplier.phone }}
+                        </small>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="medicine-list">
+
+                        {% for medicine in supplier.medicines %}
+
+                        <span class="medicine-tag">
+                            {{ medicine }}
+                        </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+                    {{ supplier.last_order }}
+                </td>
+
+
+                <td>
+
+                    <span class="arrival-date">
+                        {{ supplier.arrival_date }}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span class="delivery-delay">
+
+                        {{ supplier.delivery_delay }}
+                        jour{% if supplier.delivery_delay != 1 %}s{% endif %}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <strong class="amount">
+
+                        {{ "{:,.0f}".format(supplier.amount).replace(",", " ") }}
+                        Ar
+
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    {% if supplier.status == "Actif" %}
+
+                    <span class="supplier-status active">
+                        <i class="bi bi-check-circle"></i>
+                        Actif
+                    </span>
+
+                    {% elif supplier.status == "Commande en attente" %}
+
+                    <span class="supplier-status pending">
+                        <i class="bi bi-clock"></i>
+                        Commande en attente
+                    </span>
+
+                    {% else %}
+
+                    <span class="supplier-status late">
+                        <i class="bi bi-exclamation-circle"></i>
+                        En retard
+                    </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <td>
+
+                    <div class="action-buttons">
+
+                        <button
+                            type="button"
+                            class="action-btn view"
+                            data-id="{{ supplier.id }}"
+                            title="Voir">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="action-btn edit"
+                            data-id="{{ supplier.id }}"
+                            title="Modifier">
+
+                            <i class="bi bi-pencil"></i>
+
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+
+            <!-- Aucun résultat -->
+
+            <tr
+                id="emptySupplier"
+                style="display: none;">
+
+                <td
+                    colspan="10"
+                    class="empty-state">
+
+                    <i class="bi bi-search"></i>
+
+                    <p>
+                        Aucun fournisseur trouvé.
+                    </p>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+<!-- ========================= -->
+
+<!-- ARRIVAGES PRÉVUS -->
+
+<!-- ========================= -->
+
+<div class="upcoming-card">
+
+<div class="section-header">
+
+    <div>
+
+        <h5>
+            <i class="bi bi-calendar-check"></i>
+            Prochains arrivages
+        </h5>
+
+        <p>
+            Suivi des prochaines livraisons fournisseurs
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="upcoming-list">
+
+    {% for supplier in upcoming_suppliers %}
+
+    <div class="upcoming-item">
+
+        <div class="upcoming-icon">
+            <i class="bi bi-box-seam"></i>
+        </div>
+
+
+        <div class="upcoming-info">
+
+            <strong>
+                {{ supplier.name }}
+            </strong>
+
+            <span>
+                {{ supplier.medicine }}
+            </span>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                {{ supplier.arrival_date }}
+            </strong>
+
+            <span class="upcoming-delay">
+                {{ supplier.delivery_delay }} jours
+            </span>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+
+        <i class="bi bi-calendar-x"></i>
+
+        <p>
+            Aucun arrivage prévu.
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+</div>
+
+<!-- ====================================================== -->
+
+<!-- MODAL : AJOUTER UN FOURNISSEUR -->
+
+<!-- ====================================================== -->
+
+<div
+    class="modal fade"
+    id="supplierModal"
+    tabindex="-1"
+    aria-hidden="true">
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+
+    <div class="modal-content">
+
+
+        <!-- EN-TÊTE DU MODAL -->
+
+        <div class="modal-header">
+
+            <h5 class="modal-title">
+
+                <i class="bi bi-truck me-2"></i>
+
+                Ajouter un fournisseur
+
+            </h5>
+
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Fermer">
+            </button>
+
+        </div>
+
+
+        <!-- FORMULAIRE -->
+
+        <form
+            action="{{ url_for('fournisseurs.ajouter_fournisseur') }}"
+            method="POST">
+
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+
+                    <!-- NOM -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nom du fournisseur *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-control"
+                            placeholder="Ex : Sanofi"
+                            required>
+
+                    </div>
+
+
+                    <!-- VILLE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Ville *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="city"
+                            class="form-control"
+                            placeholder="Ex : Antananarivo"
+                            required>
+
+                    </div>
+
+
+                    <!-- CONTACT -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Personne de contact *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="contact"
+                            class="form-control"
+                            placeholder="Ex : Marie Dupont"
+                            required>
+
+                    </div>
+
+
+                    <!-- TELEPHONE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Téléphone *
+                        </label>
+
+                        <input
+                            type="text"
+                            name="phone"
+                            class="form-control"
+                            placeholder="Ex : 034 00 000 00"
+                            required>
+
+                    </div>
+
+
+                    <!-- MEDICAMENTS -->
+
+                    <div class="col-12">
+
+                        <label class="form-label">
+                            Médicaments fournis
+                        </label>
+
+                        <input
+                            type="text"
+                            name="medicines"
+                            class="form-control"
+                            placeholder="Ex : Paracétamol, Oméprazole">
+
+                        <div class="form-text">
+                            Séparez les médicaments par des virgules.
+                        </div>
+
+                    </div>
+
+
+                    <!-- DERNIERE COMMANDE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Dernière commande
+                        </label>
+
+                        <input
+                            type="date"
+                            name="last_order"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+
+                    <!-- ARRIVEE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Date d'arrivée
+                        </label>
+
+                        <input
+                            type="date"
+                            name="arrival_date"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+
+                    <!-- DELAI -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Délai de livraison
+                        </label>
+
+                        <input
+                            type="number"
+                            name="delivery_delay"
+                            class="form-control"
+                            value="0"
+                            min="0">
+
+                    </div>
+
+
+                    <!-- MONTANT -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Montant
+                        </label>
+
+                        <input
+                            type="number"
+                            name="amount"
+                            class="form-control"
+                            value="0"
+                            min="0"
+                            step="0.01">
+
+                    </div>
+
+
+                    <!-- STATUT -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Statut
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select">
+
+                            <option value="Actif">
+                                Actif
+                            </option>
+
+                            <option value="Commande en attente">
+                                Commande en attente
+                            </option>
+
+                            <option value="En retard">
+                                En retard
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PIED DU MODAL -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Annuler
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    <i class="bi bi-check-lg me-1"></i>
+
+                    Enregistrer
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/fournisseurs.js') }}"></script>
+
+{% endblock %}

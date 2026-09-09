@@ -1,0 +1,805 @@
+
+/* =====================================================
+   WELLPHARMA 2.0 - PAGE DE CONNEXION
+   Design moderne / professionnel
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f8fafb;
+    color: #1f2937;
+}
+
+
+/* =====================================================
+   PAGE PRINCIPALE
+===================================================== */
+
+.login-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 52% 48%;
+    background: #ffffff;
+}
+
+
+/* =====================================================
+   PARTIE GAUCHE
+===================================================== */
+
+.login-left {
+    position: relative;
+    min-height: 100vh;
+
+    padding: 55px 70px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fcfa 0%,
+            #ffffff 55%,
+            #f2faf6 100%
+        );
+
+    border-right: 1px solid #edf1ef;
+}
+
+
+/* =====================================================
+   DECORATIONS
+===================================================== */
+
+.login-left::before {
+    content: "";
+
+    position: absolute;
+
+    width: 520px;
+    height: 520px;
+
+    right: -260px;
+    bottom: -270px;
+
+    border-radius: 50%;
+
+    background: #e7f7ee;
+
+    opacity: 0.75;
+}
+
+.login-left::after {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    right: 70px;
+    top: 80px;
+
+    border-radius: 50%;
+
+    border: 1px solid #dcefe4;
+
+    opacity: 0.8;
+}
+
+
+/* =====================================================
+   MARQUE
+===================================================== */
+
+.brand {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.wellpharma-logo {
+    width: 155px;
+    height: auto;
+
+    object-fit: contain;
+}
+
+.ispm-logo {
+    width: 58px;
+    height: 58px;
+
+    padding: 4px;
+
+    object-fit: contain;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    border: 1px solid #e4ebe7;
+
+    box-shadow: 0 4px 15px rgba(31, 41, 55, 0.05);
+}
+
+
+/* =====================================================
+   CONTENU DE BIENVENUE
+===================================================== */
+
+.welcome-content {
+    position: relative;
+    z-index: 2;
+
+    max-width: 500px;
+}
+
+
+/* PETIT BADGE */
+
+.welcome-icon {
+    width: 58px;
+    height: 58px;
+
+    margin-bottom: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    color: #198754;
+
+    font-size: 25px;
+
+    border: 1px solid #e2eee7;
+
+    box-shadow:
+        0 8px 25px rgba(25, 135, 84, 0.08);
+}
+
+
+/* TITRE */
+
+.welcome-content h1 {
+    margin-bottom: 18px;
+
+    color: #17221c;
+
+    font-size: 42px;
+    line-height: 1.22;
+
+    font-weight: 600;
+
+    letter-spacing: -1px;
+}
+
+
+/* DESCRIPTION */
+
+.welcome-content p {
+    max-width: 430px;
+
+    margin: 0;
+
+    color: #748078;
+
+    font-size: 14px;
+
+    line-height: 1.9;
+
+    font-weight: 400;
+}
+
+
+/* =====================================================
+   PETITE CARTE DECORATIVE
+===================================================== */
+
+.login-left .welcome-content::after {
+    content: "Gestion de pharmacie";
+
+    position: absolute;
+
+    right: -40px;
+    bottom: -90px;
+
+    padding: 13px 18px;
+
+    background: rgba(255, 255, 255, 0.9);
+
+    border: 1px solid #e2eee7;
+
+    border-radius: 10px;
+
+    color: #198754;
+
+    font-size: 10px;
+    font-weight: 500;
+
+    box-shadow:
+        0 12px 30px rgba(31, 41, 55, 0.07);
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.login-footer {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    color: #a0aaa4;
+
+    font-size: 10px;
+}
+
+
+/* =====================================================
+   PARTIE DROITE
+===================================================== */
+
+.login-right {
+    min-height: 100vh;
+
+    padding: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+}
+
+
+/* =====================================================
+   CARTE DE CONNEXION
+===================================================== */
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+
+    padding: 45px 42px;
+
+    background: #ffffff;
+
+    border: 1px solid #e8eeeb;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 20px 50px rgba(31, 41, 55, 0.07);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.login-header {
+    text-align: left;
+
+    margin-bottom: 30px;
+}
+
+
+/* ICONE */
+
+.login-icon {
+    width: 48px;
+    height: 48px;
+
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eaf7ef;
+
+    color: #198754;
+
+    font-size: 21px;
+}
+
+
+/* TITRE */
+
+.login-header h2 {
+    margin: 0 0 7px;
+
+    color: #17221c;
+
+    font-size: 25px;
+
+    font-weight: 600;
+
+    letter-spacing: -0.3px;
+}
+
+
+/* SOUS-TITRE */
+
+.login-header p {
+    margin: 0;
+
+    color: #94a09a;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   MESSAGE D'ERREUR
+===================================================== */
+
+.login-alert {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 20px;
+
+    padding: 12px 13px;
+
+    background: #fff5f5;
+
+    border: 1px solid #f5d5d5;
+
+    border-radius: 9px;
+
+    color: #d9534f;
+
+    font-size: 10px;
+}
+
+
+/* =====================================================
+   FORMULAIRE
+===================================================== */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #46524b;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+/* CONTENEUR INPUT */
+
+.input-wrapper {
+    position: relative;
+}
+
+
+/* ICONE INPUT */
+
+.input-wrapper > i {
+    position: absolute;
+
+    left: 14px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #a3aea8;
+
+    font-size: 15px;
+
+    pointer-events: none;
+
+    transition: 0.2s;
+}
+
+
+/* INPUT */
+
+.input-wrapper input {
+    width: 100%;
+    height: 46px;
+
+    padding: 0 42px;
+
+    border: 1px solid #dfe6e2;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #334139;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        background 0.2s;
+}
+
+.input-wrapper input::placeholder {
+    color: #b3bcb7;
+}
+
+.input-wrapper input:hover {
+    border-color: #cbd8d1;
+}
+
+.input-wrapper input:focus {
+    border-color: #198754;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(25, 135, 84, 0.08);
+}
+
+.input-wrapper input:focus + .password-toggle {
+    color: #198754;
+}
+
+
+/* =====================================================
+   MOT DE PASSE
+===================================================== */
+
+.password-toggle {
+    position: absolute;
+
+    right: 11px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    background: transparent;
+
+    color: #a3aea8;
+
+    cursor: pointer;
+
+    border-radius: 6px;
+
+    transition: 0.2s;
+}
+
+.password-toggle:hover {
+    background: #f1f7f3;
+
+    color: #198754;
+}
+
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 3px 0 24px;
+
+    font-size: 10px;
+}
+
+
+/* SE SOUVENIR */
+
+.remember-me {
+    display: flex;
+    align-items: center;
+
+    gap: 7px;
+
+    color: #738079;
+
+    cursor: pointer;
+}
+
+.remember-me input {
+    width: 13px;
+    height: 13px;
+
+    accent-color: #198754;
+}
+
+
+/* MOT DE PASSE OUBLIE */
+
+.forgot-password {
+    color: #198754;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition: 0.2s;
+}
+
+.forgot-password:hover {
+    color: #146c43;
+
+    text-decoration: none;
+}
+
+
+/* =====================================================
+   BOUTON CONNEXION
+===================================================== */
+
+.login-btn {
+    width: 100%;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #198754;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px rgba(25, 135, 84, 0.18);
+
+    transition:
+        background 0.2s,
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.login-btn:hover {
+    background: #157347;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 22px rgba(25, 135, 84, 0.22);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+
+    box-shadow:
+        0 5px 12px rgba(25, 135, 84, 0.15);
+}
+
+
+/* =====================================================
+   SECURITE
+===================================================== */
+
+.login-security {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-top: 23px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #edf1ef;
+
+    color: #a1aba6;
+
+    font-size: 9px;
+}
+
+.login-security i {
+    color: #198754;
+
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   RESPONSIVE TABLETTE
+===================================================== */
+
+@media (max-width: 1050px) {
+
+    .login-page {
+        grid-template-columns: 45% 55%;
+    }
+
+    .login-left {
+        padding: 45px;
+    }
+
+    .welcome-content h1 {
+        font-size: 35px;
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE MOBILE
+===================================================== */
+
+@media (max-width: 850px) {
+
+    .login-page {
+        display: block;
+    }
+
+    .login-left {
+        min-height: auto;
+
+        padding: 30px 35px 35px;
+    }
+
+    .login-left::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .login-left::after {
+        display: none;
+    }
+
+    .welcome-content {
+        margin-top: 60px;
+    }
+
+    .welcome-content h1 {
+        font-size: 30px;
+    }
+
+    .welcome-content p {
+        font-size: 13px;
+    }
+
+    .login-left .welcome-content::after {
+        display: none;
+    }
+
+    .login-footer {
+        margin-top: 50px;
+    }
+
+    .login-right {
+        min-height: auto;
+
+        padding: 45px 25px;
+    }
+
+}
+
+
+/* =====================================================
+   PETIT MOBILE
+===================================================== */
+
+@media (max-width: 500px) {
+
+    .login-left {
+        padding: 25px;
+    }
+
+    .brand {
+        gap: 13px;
+    }
+
+    .wellpharma-logo {
+        width: 125px;
+    }
+
+    .ispm-logo {
+        width: 50px;
+        height: 50px;
+    }
+
+    .welcome-content {
+        margin-top: 45px;
+    }
+
+    .welcome-icon {
+        width: 50px;
+        height: 50px;
+
+        font-size: 21px;
+    }
+
+    .welcome-content h1 {
+        font-size: 27px;
+    }
+
+    .welcome-content p {
+        font-size: 12px;
+    }
+
+    .login-right {
+        padding: 30px 18px;
+    }
+
+    .login-card {
+        padding: 30px 23px;
+
+        border-radius: 13px;
+    }
+
+    .login-options {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 11px;
+    }
+
+}
+
