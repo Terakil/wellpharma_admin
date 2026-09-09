@@ -208,6 +208,14 @@ class MouvementProduit(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 
+class ProduitArchive(db.Model):
+    __tablename__ = "produits_archives"
+
+    id = db.Column(db.Integer, primary_key=True)
+    id_produit = db.Column(db.Integer, unique=True, nullable=False)
+    date_archivage = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+
 Medicine = Produit
 MedicineInfo = Produit
 StockMovement = MouvementStock

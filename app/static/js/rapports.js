@@ -132,14 +132,29 @@ function generateReport() {
     }
 
 
-    const selectedReport =
-        reportType.options[reportType.selectedIndex].text;
-
-    alert(
-        'Le rapport "' +
-        selectedReport +
-        '" sera généré.'
-    );
+    fetch("/rapports/ajouter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            type: reportType.value,
+            period: reportPeriod.value
+        })
+    })
+        .then(function (response) {
+            return response.json().then(function (result) {
+                return { response, result };
+            });
+        })
+        .then(function (data) {
+            if (!data.response.ok || !data.result.success) {
+                alert(data.result.message || "Le rapport n'a pas pu être créé.");
+                return;
+            }
+            window.location.reload();
+        })
+        .catch(function () {
+            alert("Impossible de contacter le serveur.");
+        });
 
 }
 

@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from datetime import datetime
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
-from app.models import db, Produit
+from app.models import Commande, Produit, ProduitArchive, db
 
 
 medicaments = Blueprint("medicaments", __name__)
@@ -14,7 +16,11 @@ def generate_reference(name):
 
 @medicaments.route("/medicaments")
 def liste_medicaments():
-    medicines = Produit.query.order_by(Produit.id_produit.asc()).all()
+    archived_ids = {row.id_produit for row in ProduitArchive.query.all()}
+    medicines = [
+        medicine for medicine in Produit.query.order_by(Produit.id_produit.asc()).all()
+        if medicine.id_produit not in archived_ids
+    ]
 
     total = len(medicines)
     en_stock = sum(1 for medicine in medicines if medicine.quantite > 10)
@@ -67,4 +73,85 @@ def ajouter_medicament():
         flash(f"Erreur : {e}", "danger")
 
     return redirect(url_for("medicaments.liste_medicaments"))
+
+
+@medicaments.route("/medicaments/<int:medicine_id>/modifier", methods=["POST"])
+def modifier_medicament(medicine_id):
+    data = request.get_json(silent=True) or request.form
+    produit = db.session.get(Produit, medicine_id)
+    if produit is None:
+        return jsonify({"success": False, "message": "Médicament introuvable."}), 404
+
+    try:
+        designation = (data.get("name") or produit.designation).strip()
+        categorie = (data.get("category") or produit.categorie or "Autre").strip()
+        prix = float(data.get("price", produit.prix_unitaire))
+        quantite = int(data.get("quantity", produit.quantite))
+        if not designation or prix < 0 or quantite < 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        return jsonify({"success": False, "message": "Nom, prix ou quantité invalide."}), 400
+
+    produit.designation = designation
+    produit.categorie = categorie
+    produit.prix_unitaire = prix
+    produit.quantite = quantite
+    produit.description = data.get("description", produit.description)
+    produit.image_url = data.get("image_url", produit.image_url)
+    produit.needs_prescription = str(data.get(
+        "needs_prescription", int(bool(produit.needs_prescription))
+    )).lower() in ("1", "true", "oui")
+    produit.statut = "EN STOCK" if quantite > 10 else "FAIBLE" if quantite > 0 else "RUPTURE"
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"success": False, "message": "Modification impossible dans la base."}), 500
+
+    return jsonify({"success": True, "message": "Médicament modifié avec succès."})
+
+
+@medicaments.route("/medicaments/<int:medicine_id>/supprimer", methods=["POST"])
+def supprimer_medicament(medicine_id):
+    produit = db.session.get(Produit, medicine_id)
+    if produit is None:
+        return jsonify({"success": False, "message": "Médicament introuvable."}), 404
+
+    try:
+        quantity = produit.quantite
+        if quantity > 0:
+            db.session.execute(
+                text(
+                    "INSERT INTO mouvements_produits "
+                    "(id_produit, type, quantite, date) "
+                    "VALUES (:id_produit, 'Sortie', :quantite, :date)"
+                ),
+                {
+                    "id_produit": medicine_id,
+                    "quantite": quantity,
+                    "date": datetime.now()
+                }
+            )
+
+        db.session.execute(
+            text("DELETE FROM alertes WHERE id_produit = :id_produit"),
+            {"id_produit": medicine_id}
+        )
+        Commande.query.filter_by(id_produit=medicine_id).delete(synchronize_session=False)
+        ProduitArchive.query.filter_by(id_produit=medicine_id).delete(synchronize_session=False)
+        db.session.delete(produit)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "message": "Le médicament n'a pas pu être supprimé de la base."
+        }), 500
+
+    return jsonify({
+        "success": True,
+        "message": "Médicament sorti du stock et supprimé de la base.",
+        "quantity_removed": quantity
+    })
 

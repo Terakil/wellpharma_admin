@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
-from flask import Blueprint, render_template
+from flask import Blueprint, jsonify, render_template, request
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import inspect, text
 
 from app.models import db
@@ -19,6 +20,23 @@ def format_value(value):
     if isinstance(value, (datetime, date)):
         return value.strftime("%d/%m/%Y")
     return str(value)
+
+
+REPORT_TYPES = {
+    "ventes": (1, "Ventes"),
+    "stocks": (2, "Stocks"),
+    "commandes": (3, "Commandes"),
+    "clients": (4, "Clients"),
+    "medicaments": (5, "Médicaments")
+}
+
+
+def report_type_label(value):
+    try:
+        type_id = int(value)
+    except (TypeError, ValueError):
+        return format_value(value)
+    return next((label for code, label in REPORT_TYPES.values() if code == type_id), "Autre")
 
 
 def load_reports():
@@ -45,7 +63,7 @@ def load_reports():
         reports.append({
             "id": report_id,
             "name": first_value(row, ["nom", "name", "titre", "libelle"], f"Rapport {report_id}"),
-            "type": format_value(report_type),
+            "type": report_type_label(report_type),
             "period": format_value(period),
             "date": format_value(report_date),
             "status": format_value(first_value(row, [
@@ -73,3 +91,36 @@ def page_rapports():
         stats=stats,
         reports=reports
     )
+
+
+@rapports.route("/rapports/ajouter", methods=["POST"])
+def ajouter_rapport():
+    data = request.get_json(silent=True) or request.form
+    report_type = str(data.get("type", "")).lower()
+    period = str(data.get("period", "7days")).lower()
+
+    if report_type not in REPORT_TYPES:
+        return jsonify({"success": False, "message": "Type de rapport invalide."}), 400
+
+    period_days = {
+        "today": 1,
+        "7days": 7,
+        "30days": 30,
+        "month": 30,
+        "custom": 0
+    }.get(period)
+    if period_days is None:
+        return jsonify({"success": False, "message": "Période invalide."}), 400
+
+    report_id = f"R-{datetime.now().strftime('%Y%m%d%H%M%S%f')}"
+    try:
+        db.session.execute(
+            text("INSERT INTO rapports (id, type, periode) VALUES (:id, :type, :periode)"),
+            {"id": report_id, "type": REPORT_TYPES[report_type][0], "periode": period_days}
+        )
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"success": False, "message": "Le rapport n'a pas pu être enregistré."}), 500
+
+    return jsonify({"success": True, "message": "Rapport enregistré.", "id": report_id})

@@ -185,7 +185,7 @@ Médicaments - WellPharma
                 class="summary-value"
                 id="totalMedicines"
             >
-                0
+                {{ total }}
             </div>
 
         </div>
@@ -214,7 +214,7 @@ Médicaments - WellPharma
                 class="summary-value"
                 id="inStockCount"
             >
-                0
+                {{ en_stock }}
             </div>
 
         </div>
@@ -243,7 +243,7 @@ Médicaments - WellPharma
                 class="summary-value"
                 id="lowStockCount"
             >
-                0
+                {{ stock_faible }}
             </div>
 
         </div>
@@ -272,7 +272,7 @@ Médicaments - WellPharma
                 class="summary-value"
                 id="outOfStockCount"
             >
-                0
+                {{ rupture }}
             </div>
 
         </div>
@@ -387,11 +387,18 @@ Médicaments - WellPharma
                     <tr
                         class="medicine-row"
 
+                        data-id="{{ medicine.id_produit }}"
                         data-name="{{ medicine.name|lower }}"
+                        data-display-name="{{ medicine.name }}"
 
                         data-category="{{ medicine.category|lower }}"
+                        data-display-category="{{ medicine.category }}"
 
                         data-quantity="{{ medicine.quantity }}"
+                        data-price="{{ medicine.price }}"
+                        data-description="{{ medicine.description or '' }}"
+                        data-image="{{ medicine.image_url or '' }}"
+                        data-prescription="{{ 'oui' if medicine.needs_prescription else 'non' }}"
                     >
 
 

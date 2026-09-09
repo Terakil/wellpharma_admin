@@ -89,7 +89,7 @@ def ajouter_fournisseur():
     city = request.form.get("city", "").strip()
     contact = request.form.get("contact", "").strip()
     phone = request.form.get("phone", "").strip()
-    medicines = request.form.get("medicines", "").strip()
+    medicines = request.form.get("medicines", "").strip() or "Non spécifié"
     last_order = parse_supplier_date(request.form.get("last_order"))
     arrival_date = parse_supplier_date(request.form.get("arrival_date"))
     delivery_delay = request.form.get("delivery_delay", 0)
@@ -99,27 +99,28 @@ def ajouter_fournisseur():
         flash("Veuillez remplir tous les champs obligatoires.", "danger")
         return redirect(url_for("fournisseurs.liste_fournisseurs"))
 
-    if not last_order or not arrival_date:
-        flash("Les deux dates du fournisseur sont obligatoires et doivent être valides.", "danger")
-        return redirect(url_for("fournisseurs.liste_fournisseurs"))
+    last_order = last_order or date.today()
+    arrival_date = arrival_date or date.today()
 
     try:
         delivery_delay = int(delivery_delay)
         amount = int(float(amount))
+        if delivery_delay < 0 or amount < 0:
+            raise ValueError
     except (TypeError, ValueError):
         flash("Les dates, le délai et le montant doivent être valides.", "danger")
         return redirect(url_for("fournisseurs.liste_fournisseurs"))
 
     new_supplier = Supplier(
-        nom=name,
-        ville=city,
-        personne_contact=contact,
-        tel=phone or None,
-        medicament_fourni=medicines,
+        nom=name[:50],
+        ville=city[:50],
+        personne_contact=contact[:50],
+        tel=phone[:15] or None,
+        medicament_fourni=medicines[:50],
         last_command=last_order,
         date_arrive=arrival_date,
         delai_livraison=delivery_delay,
-        amount=amount,
+        montant=amount,
     )
 
     try:
