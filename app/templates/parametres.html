@@ -1129,6 +1129,8 @@
 
 
 {% block js %}
+<script>
+    window.savedSettings = {{ settings|tojson }};
+</script>
 <script src="{{ url_for('static', filename='js/parametres.js') }}"></script>
 {% endblock %}
-```

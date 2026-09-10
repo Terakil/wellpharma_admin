@@ -174,6 +174,8 @@ CREATE TABLE `produits` (
   `description` text DEFAULT NULL,
   `image_url` text DEFAULT NULL,
   `needs_prescription` tinyint(1) NOT NULL DEFAULT 0,
+  `date_peremption` date DEFAULT NULL,
+  `id_fournisseur` int(11) DEFAULT NULL,
   `date_ajout` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

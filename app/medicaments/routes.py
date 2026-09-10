@@ -3,10 +3,31 @@ from datetime import datetime
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.models import Commande, Produit, ProduitArchive, db
+from app.models import Commande, Fournisseur, Produit, ProduitArchive, db
 
 
 medicaments = Blueprint("medicaments", __name__)
+
+
+def parse_medicine_date(value):
+    value = (value or "").strip()
+    if not value:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def parse_supplier_id(value):
+    value = (value or "").strip()
+    if not value:
+        return None
+    try:
+        supplier_id = int(value)
+    except (TypeError, ValueError):
+        return None
+    return supplier_id if db.session.get(Fournisseur, supplier_id) else None
 
 
 def generate_reference(name):
@@ -30,6 +51,7 @@ def liste_medicaments():
     return render_template(
         "medicaments.html",
         medicines=medicines,
+        suppliers=Fournisseur.query.order_by(Fournisseur.nom.asc()).all(),
         total=total,
         en_stock=en_stock,
         stock_faible=stock_faible,
@@ -47,6 +69,8 @@ def ajouter_medicament():
         description = request.form.get("description", "")
         image_url = request.form.get("image_url", "").strip()
         needs_prescription = request.form.get("requires_prescription") == "oui"
+        expiration_date = parse_medicine_date(request.form.get("expiration_date"))
+        supplier_id = parse_supplier_id(request.form.get("supplier"))
 
         if not designation or not categorie:
             flash("Le nom et la catégorie du médicament sont obligatoires.", "danger")
@@ -61,6 +85,8 @@ def ajouter_medicament():
             description=description,
             image_url=image_url or None,
             needs_prescription=needs_prescription,
+            date_peremption=expiration_date,
+            id_fournisseur=supplier_id,
             statut="EN STOCK" if quantite > 10 else "FAIBLE" if quantite > 0 else "RUPTURE"
         )
 
@@ -85,8 +111,10 @@ def modifier_medicament(medicine_id):
     try:
         designation = (data.get("name") or produit.designation).strip()
         categorie = (data.get("category") or produit.categorie or "Autre").strip()
-        prix = float(data.get("price", produit.prix_unitaire))
+        prix = float(data.get("price") or produit.prix_unitaire or 0)
         quantite = int(data.get("quantity", produit.quantite))
+        expiration_date = parse_medicine_date(data.get("expiration_date"))
+        supplier_id = parse_supplier_id(data.get("supplier_id"))
         if not designation or prix < 0 or quantite < 0:
             raise ValueError
     except (TypeError, ValueError):
@@ -101,6 +129,8 @@ def modifier_medicament(medicine_id):
     produit.needs_prescription = str(data.get(
         "needs_prescription", int(bool(produit.needs_prescription))
     )).lower() in ("1", "true", "oui")
+    produit.date_peremption = expiration_date
+    produit.id_fournisseur = supplier_id
     produit.statut = "EN STOCK" if quantite > 10 else "FAIBLE" if quantite > 0 else "RUPTURE"
 
     try:
@@ -109,7 +139,11 @@ def modifier_medicament(medicine_id):
         db.session.rollback()
         return jsonify({"success": False, "message": "Modification impossible dans la base."}), 500
 
-    return jsonify({"success": True, "message": "Médicament modifié avec succès."})
+    return jsonify({
+        "success": True,
+        "message": "Médicament modifié avec succès.",
+        "price": float(produit.prix_unitaire)
+    })
 
 
 @medicaments.route("/medicaments/<int:medicine_id>/supprimer", methods=["POST"])

@@ -1,9 +1,10 @@
 from collections import defaultdict
 from datetime import date, datetime, timedelta
+import json
 
 from flask import Blueprint, render_template, redirect, url_for, session
 
-from app.models import Commande, MouvementProduit, Produit, Utilisateur, db
+from app.models import Commande, MouvementProduit, Parametre, Produit, Utilisateur, db
 from sqlalchemy import func
 
 
@@ -69,7 +70,7 @@ def build_sales_chart(commandes, today):
     return chart
 
 
-def build_stock_data(commandes, mouvements, produits, today):
+def build_stock_data(commandes, mouvements, produits, today, expiration_threshold):
     stock_data = {}
     for period in ("day", "week", "month", "year"):
         start, end = period_bounds(period, today)
@@ -89,7 +90,11 @@ def build_stock_data(commandes, mouvements, produits, today):
             "entries": entries,
             "exits": movement_exits + order_exits,
             "ruptures": sum(1 for produit in produits if produit.quantite == 0),
-            "expiration": 0
+            "expiration": sum(
+                1 for produit in produits
+                if produit.date_peremption and
+                produit.date_peremption <= today + timedelta(days=expiration_threshold)
+            )
         }
     return stock_data
 
@@ -104,6 +109,12 @@ def home():
     commandes = Commande.query.all()
     mouvements = MouvementProduit.query.all()
     today = date.today()
+    settings = {item.cle: json.loads(item.valeur) for item in Parametre.query.all()}
+    management_settings = settings.get("management", {})
+    try:
+        expiration_threshold = max(0, int(management_settings.get("expirationThreshold", 30)))
+    except (TypeError, ValueError):
+        expiration_threshold = 30
 
     revenue_total = db.session.query(
         func.coalesce(func.sum(Commande.prix_total), 0)
@@ -120,14 +131,32 @@ def home():
         "out_of_stock": out_of_stock,
     }
 
-    notifications = [
+    expiration_notifications = []
+    expiration_limit = today + timedelta(days=expiration_threshold)
+    for produit in produits:
+        if not produit.date_peremption or produit.date_peremption > expiration_limit:
+            continue
+        if produit.date_peremption < today:
+            message = f"{produit.designation} : périmé depuis le {produit.date_peremption.strftime('%d/%m/%Y')}"
+            notification_type = "danger"
+        elif produit.date_peremption == today:
+            message = f"{produit.designation} : expire aujourd'hui"
+            notification_type = "danger"
+        else:
+            days_left = (produit.date_peremption - today).days
+            message = f"{produit.designation} : expiration dans {days_left} jour(s)"
+            notification_type = "warning"
+        expiration_notifications.append({"type": notification_type, "message": message})
+
+    stock_notifications = [
         {
             "type": "danger" if produit.quantite == 0 else "low-stock",
             "message": f"{produit.designation} : {produit.quantite} unités restantes"
         }
         for produit in produits
         if produit.quantite <= 10
-    ][:3]
+    ]
+    notifications = (expiration_notifications + stock_notifications)[:3]
 
     if not notifications:
         notifications = [{
@@ -154,7 +183,10 @@ def home():
         movement.quantite for movement in mouvements
         if movement_kind(movement.type) == "exit"
     ) + sum(commande.quantite for commande in commandes)
-    expiration_alerts = 0
+    expiration_alerts = sum(
+        1 for produit in produits
+        if produit.date_peremption and produit.date_peremption <= expiration_limit
+    )
 
     top_sales = defaultdict(int)
     for commande in commandes:
@@ -174,6 +206,6 @@ def home():
         stock_exits=stock_exits,
         expiration_alerts=expiration_alerts,
         sales_chart=build_sales_chart(commandes, today),
-        stock_data=build_stock_data(commandes, mouvements, produits, today),
+        stock_data=build_stock_data(commandes, mouvements, produits, today, expiration_threshold),
         top_medicaments=top_medicaments
     )

@@ -495,10 +495,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
 
-                    showEntryMessage(
-                        result.message,
-                        "success"
-                    );
+                    if (window.showAppNotification) window.showAppNotification(result.message, "success");
+                    showEntryMessage(result.message, "success");
 
 
                     setTimeout(

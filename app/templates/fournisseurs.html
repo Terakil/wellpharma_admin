@@ -280,10 +280,18 @@
             <tr
                 class="supplier-row"
                 data-name="{{ supplier.name|lower }}"
+                data-display-name="{{ supplier.name }}"
                 data-search="{{ (supplier.name ~ ' ' ~ supplier.city ~ ' ' ~ supplier.contact ~ ' ' ~ supplier.medicines|join(' '))|lower }}"
+                data-city="{{ supplier.city }}"
+                data-contact="{{ supplier.contact }}"
+                data-phone="{{ supplier.phone or '' }}"
+                data-medicines="{{ supplier.medicines|join(', ') }}"
+                data-last-order="{{ supplier.last_order_key }}"
+                data-arrival-date="{{ supplier.arrival_date_key }}"
                 data-status="{{ supplier.status|lower }}"
                 data-arrival="{{ supplier.arrival_date }}"
-                data-delay="{{ supplier.delivery_delay }}">
+                data-delay="{{ supplier.delivery_delay }}"
+                data-amount="{{ supplier.amount }}">
 
                 <td>
 

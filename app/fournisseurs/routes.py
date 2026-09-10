@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    jsonify,
     render_template,
     request,
     redirect,
@@ -58,7 +59,9 @@ def liste_fournisseurs():
             "phone": supplier.phone,
             "medicines": [item.strip() for item in supplier.medicines.split(",")] if supplier.medicines else [],
             "last_order": display_date(supplier.last_order),
+            "last_order_key": supplier.last_order.isoformat() if supplier.last_order else "",
             "arrival_date": display_date(supplier.arrival_date),
+            "arrival_date_key": supplier.arrival_date.isoformat() if supplier.arrival_date else "",
             "delivery_delay": supplier.delivery_delay or 0,
             "amount": supplier.montant or 0,
             "status": status
@@ -147,3 +150,48 @@ def ajouter_fournisseur():
 
     flash("Le fournisseur a été ajouté avec succès.", "success")
     return redirect(url_for("fournisseurs.liste_fournisseurs"))
+
+
+@fournisseurs.route("/fournisseurs/<int:supplier_id>/modifier", methods=["POST"])
+def modifier_fournisseur(supplier_id):
+    data = request.get_json(silent=True) or request.form
+    supplier = db.session.get(Fournisseur, supplier_id)
+    if supplier is None:
+        return jsonify({"success": False, "message": "Fournisseur introuvable."}), 404
+
+    name = (data.get("name") or supplier.nom).strip()
+    city = (data.get("city") or supplier.ville).strip()
+    contact = (data.get("contact") or supplier.personneContact).strip()
+    phone = (data.get("phone") or "").strip()
+    medicines = (data.get("medicines") or "Non spécifié").strip()
+    last_order = parse_supplier_date(data.get("last_order")) or supplier.LastCommand
+    arrival_date = parse_supplier_date(data.get("arrival_date")) or supplier.DateArrive
+
+    if not name or not city or not contact:
+        return jsonify({"success": False, "message": "Nom, ville et contact sont obligatoires."}), 400
+
+    try:
+        delivery_delay = int(data.get("delivery_delay", supplier.delaiLivraison))
+        amount = int(float(data.get("amount", supplier.montant)))
+        if delivery_delay < 0 or amount < 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        return jsonify({"success": False, "message": "Délai ou montant invalide."}), 400
+
+    supplier.nom = name[:50]
+    supplier.ville = city[:50]
+    supplier.personneContact = contact[:50]
+    supplier.tel = phone[:15] or None
+    supplier.MedicamentFourni = medicines[:50]
+    supplier.LastCommand = last_order
+    supplier.DateArrive = arrival_date
+    supplier.delaiLivraison = delivery_delay
+    supplier.montant = amount
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"success": False, "message": "Modification impossible dans la base."}), 500
+
+    return jsonify({"success": True, "message": "Fournisseur modifié avec succès."})

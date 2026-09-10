@@ -50,12 +50,11 @@ def ajouter_commande():
 
     try:
         quantity = int(data.get("quantity", 0))
-        amount = float(data.get("amount", 0))
         medicine_id = int(medicine_id)
     except (TypeError, ValueError):
-        return jsonify({"success": False, "message": "Produit, quantité et montant invalides."}), 400
+        return jsonify({"success": False, "message": "Produit ou quantité invalide."}), 400
 
-    if not client or quantity <= 0 or amount < 0:
+    if not client or quantity <= 0:
         return jsonify({"success": False, "message": "Les informations de commande sont obligatoires."}), 400
 
     produit = db.session.get(Produit, medicine_id)
@@ -63,6 +62,8 @@ def ajouter_commande():
         return jsonify({"success": False, "message": "Médicament introuvable."}), 404
     if produit.quantite < quantity:
         return jsonify({"success": False, "message": "Stock insuffisant pour cette commande."}), 400
+
+    amount = float(produit.prix_unitaire or 0) * quantity
 
     commande = Commande(
         id_produit=produit.id_produit,
@@ -84,6 +85,7 @@ def ajouter_commande():
     return jsonify({
         "success": True,
         "message": "Commande enregistrée et sortie de stock effectuée.",
+        "amount": int(round(amount)),
         "order_id": commande.id_commande,
         "medicine_id": produit.id_produit,
         "quantity": produit.quantite

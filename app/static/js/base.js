@@ -1,3 +1,17 @@
+window.showAppNotification = function (message, type = "success") {
+    const notification = document.createElement("div");
+    notification.className = "app-notification " + type;
+    const icon = type === "success" ? "bi-check-circle" : type === "error" ? "bi-exclamation-circle" : "bi-info-circle";
+    notification.innerHTML = `<i class="bi ${icon}"></i><span></span>`;
+    notification.querySelector("span").textContent = message;
+    document.body.appendChild(notification);
+    requestAnimationFrame(() => notification.classList.add("show"));
+    window.setTimeout(() => {
+        notification.classList.remove("show");
+        window.setTimeout(() => notification.remove(), 250);
+    }, 3000);
+};
+
 document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".list-toggle").forEach(function (button) {

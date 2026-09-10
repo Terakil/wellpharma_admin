@@ -272,16 +272,41 @@ document.addEventListener("DOMContentLoaded", function () {
         if (button) {
 
             button.addEventListener("click", function () {
-
-                showNotification(
-                    "Paramètres enregistrés avec succès.",
-                    "success"
-                );
+                const section = buttonId.replace("save", "").replace("Btn", "").toLowerCase();
+                const container = button.closest(".settings-section");
+                const values = {};
+                if (container) {
+                    container.querySelectorAll("input, select, textarea").forEach(function (field) {
+                        if (field.id) values[field.id] = field.type === "checkbox" ? field.checked : field.value;
+                    });
+                }
+                fetch("/parametres/enregistrer", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ section: section, values: values })
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (result) {
+                        showNotification(result.message, result.success ? "success" : "error");
+                    })
+                    .catch(function () {
+                        showNotification("Impossible d'enregistrer les paramètres.", "error");
+                    });
 
             });
 
         }
 
+    });
+
+    const savedSettings = window.savedSettings || {};
+    Object.values(savedSettings).forEach(function (values) {
+        Object.entries(values).forEach(function ([id, value]) {
+            const field = document.getElementById(id);
+            if (!field) return;
+            if (field.type === "checkbox") field.checked = Boolean(value);
+            else field.value = value;
+        });
     });
 
 

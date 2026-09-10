@@ -836,3 +836,31 @@ body {
     }
 
 }
+
+.app-notification {
+    position: fixed;
+    top: 82px;
+    right: 28px;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 280px;
+    max-width: 420px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(24, 33, 43, 0.18);
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.app-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.app-notification.success { background: #198754; }
+.app-notification.error { background: #dc3545; }
+.app-notification.info { background: #0d6efd; }

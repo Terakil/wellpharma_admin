@@ -402,6 +402,8 @@ Médicaments - WellPharma
 
                         data-quantity="{{ medicine.quantity }}"
                         data-price="{{ medicine.price }}"
+                        data-expiration="{{ medicine.expiration_date.isoformat() if medicine.expiration_date else '' }}"
+                        data-supplier-id="{{ medicine.id_fournisseur or '' }}"
                         data-description="{{ medicine.description or '' }}"
                         data-image="{{ medicine.image_url or '' }}"
                         data-prescription="{{ 'oui' if medicine.needs_prescription else 'non' }}"
@@ -901,13 +903,16 @@ Médicaments - WellPharma
                                 Fournisseur
                             </label>
 
-                            <input
-                                type="text"
+                            <select
                                 class="form-control"
                                 id="supplier"
                                 name="supplier"
-                                placeholder="Nom du fournisseur"
                             >
+                                <option value="">Aucun fournisseur</option>
+                                {% for supplier in suppliers %}
+                                <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                                {% endfor %}
+                            </select>
 
                         </div>
 

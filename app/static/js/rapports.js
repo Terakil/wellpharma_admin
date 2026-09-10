@@ -135,10 +135,11 @@ function generateReport() {
                 alert(data.result.message || "Le rapport n'a pas pu être créé.");
                 return;
             }
-            window.location.reload();
+            if (window.showAppNotification) window.showAppNotification("Rapport créé avec succès.", "success");
+            window.setTimeout(() => window.location.reload(), 900);
         })
         .catch(function () {
-            alert("Impossible de contacter le serveur.");
+            if (window.showAppNotification) window.showAppNotification("Impossible de contacter le serveur.", "error");
         });
 
 }
@@ -175,26 +176,6 @@ document
 
             alert(
                 "Ouverture du rapport #" +
-                this.dataset.id
-            );
-
-        });
-
-    });
-
-
-/* =====================================================
-   DOWNLOAD
-===================================================== */
-
-document
-    .querySelectorAll(".action-btn.download")
-    .forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            alert(
-                "Téléchargement du rapport #" +
                 this.dataset.id
             );
 

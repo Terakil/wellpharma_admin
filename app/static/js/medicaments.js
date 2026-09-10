@@ -226,10 +226,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     const name = row.dataset.displayName || row.dataset.name;
                     const category = row.dataset.displayCategory || row.dataset.category;
-                    const price = prompt("Prix unitaire :", row.dataset.price);
+                    const price = prompt("Prix unitaire :", row.dataset.price || "0");
                     const quantity = prompt("Quantité en stock :", row.dataset.quantity);
+                    const expirationDate = prompt("Date de péremption (AAAA-MM-JJ) :", row.dataset.expiration || "");
+                    const supplierId = prompt("ID du fournisseur :", row.dataset.supplierId || "");
 
                     if (price === null || quantity === null) {
+                        return;
+                    }
+
+                    const numericPrice = Number(String(price).replace(",", "."));
+                    const numericQuantity = Number(quantity);
+
+                    if (!Number.isFinite(numericPrice) || numericPrice < 0 || !Number.isInteger(numericQuantity) || numericQuantity < 0) {
+                        if (window.showAppNotification) window.showAppNotification("Prix ou quantité invalide.", "error");
                         return;
                     }
 
@@ -239,8 +249,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         body: JSON.stringify({
                             name: name,
                             category: category,
-                            price: price,
-                            quantity: quantity,
+                            price: numericPrice,
+                            quantity: numericQuantity,
+                            expiration_date: expirationDate,
+                            supplier_id: supplierId,
                             description: row.dataset.description,
                             image_url: row.dataset.image,
                             needs_prescription: row.dataset.prescription
@@ -253,13 +265,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         })
                         .then(function (data) {
                             if (!data.response.ok || !data.result.success) {
-                                alert(data.result.message || "Modification impossible.");
+                                if (window.showAppNotification) window.showAppNotification(data.result.message || "Modification impossible.", "error");
                                 return;
                             }
-                            window.location.reload();
+                            if (window.showAppNotification) window.showAppNotification("Prix du médicament modifié avec succès.", "success");
+                            window.setTimeout(() => window.location.reload(), 900);
                         })
                         .catch(function () {
-                            alert("Impossible de contacter le serveur.");
+                            if (window.showAppNotification) window.showAppNotification("Impossible de contacter le serveur.", "error");
                         });
 
                 }

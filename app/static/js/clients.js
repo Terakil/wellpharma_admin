@@ -79,27 +79,6 @@ if (statusFilter) {
 
 
 /* =================================================
-   BOUTON AJOUTER
-================================================= */
-
-const addClientBtn =
-    document.getElementById("addClientBtn");
-
-if (addClientBtn) {
-    addClientBtn.addEventListener(
-        "click",
-        function () {
-
-            alert(
-                "Le formulaire d'ajout de client sera disponible prochainement."
-            );
-
-        }
-    );
-}
-
-
-/* =================================================
    BOUTON VOIR
 ================================================= */
 
@@ -120,36 +99,6 @@ document.querySelectorAll(".action-btn.view")
 
                 alert(
                     "Consultation du client : " +
-                    name
-                );
-
-            }
-        );
-
-    });
-
-
-/* =================================================
-   BOUTON MODIFIER
-================================================= */
-
-document.querySelectorAll(".action-btn.edit")
-    .forEach(function (button) {
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                const row =
-                    button.closest(".client-row");
-
-                if (!row) return;
-
-                const name =
-                    row.dataset.name || "";
-
-                alert(
-                    "Modification du client : " +
                     name
                 );
 

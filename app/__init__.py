@@ -1,6 +1,7 @@
 import os
 from flask import Flask, session, redirect, url_for, request
 from app.models import db
+from sqlalchemy import inspect, text
 
 
 def create_app():
@@ -21,6 +22,15 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        product_columns = {
+            column["name"] for column in inspect(db.engine).get_columns("produits")
+        }
+        if "date_peremption" not in product_columns:
+            db.session.execute(text("ALTER TABLE produits ADD COLUMN date_peremption DATE NULL"))
+        if "id_fournisseur" not in product_columns:
+            db.session.execute(text("ALTER TABLE produits ADD COLUMN id_fournisseur INTEGER NULL"))
+        if "date_peremption" not in product_columns or "id_fournisseur" not in product_columns:
+            db.session.commit()
 
 
     # =========================

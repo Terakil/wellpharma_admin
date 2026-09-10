@@ -19,6 +19,9 @@ class Produit(db.Model):
     image_url = db.Column(db.Text)
     needs_prescription = db.Column(db.Boolean, default=False, nullable=False)
     date_ajout = db.Column(db.DateTime, default=datetime.utcnow)
+    date_peremption = db.Column(db.Date, nullable=True)
+    id_fournisseur = db.Column(db.Integer, db.ForeignKey("fournisseurs.id"), nullable=True)
+    fournisseur = db.relationship("Fournisseur", foreign_keys=[id_fournisseur], lazy="joined")
 
     @property
     def id(self):
@@ -74,11 +77,11 @@ class Produit(db.Model):
 
     @property
     def expiration_date(self):
-        return None
+        return self.date_peremption
 
     @property
     def supplier(self):
-        return None
+        return self.fournisseur.name if self.fournisseur else None
 
     def __repr__(self):
         return f"<Produit {self.designation}>"
@@ -119,6 +122,14 @@ class Utilisateur(db.Model):
 
     def __repr__(self):
         return f"<Utilisateur {self.email}>"
+
+
+class Parametre(db.Model):
+    __tablename__ = "parametres"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    cle = db.Column(db.String(100), unique=True, nullable=False)
+    valeur = db.Column(db.Text, nullable=False, default="")
 
 
 class Commande(db.Model):

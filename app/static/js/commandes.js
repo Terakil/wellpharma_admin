@@ -241,6 +241,19 @@ document
 
 const saveOrder =
     document.getElementById("saveOrder");
+const medicineSelect = document.getElementById("newMedicine");
+const quantityInput = document.getElementById("newQuantity");
+const amountInput = document.getElementById("newAmount");
+
+function updateOrderAmount() {
+    const option = medicineSelect ? medicineSelect.selectedOptions[0] : null;
+    const price = option ? Number(option.dataset.price || 0) : 0;
+    const quantity = quantityInput ? Number(quantityInput.value || 0) : 0;
+    if (amountInput) amountInput.value = price * quantity || "";
+}
+
+if (medicineSelect) medicineSelect.addEventListener("change", updateOrderAmount);
+if (quantityInput) quantityInput.addEventListener("input", updateOrderAmount);
 
 
 if (saveOrder) {
@@ -262,17 +275,10 @@ if (saveOrder) {
                     .getElementById("newQuantity")
                     .value;
 
-            const amount =
-                document
-                    .getElementById("newAmount")
-                    .value;
-
-
             if (
                 client === "" ||
                 medicine === "" ||
-                quantity === "" ||
-                amount === ""
+                quantity === ""
             ) {
 
                 alert(
@@ -290,8 +296,7 @@ if (saveOrder) {
                 body: JSON.stringify({
                     client: client,
                     medicine_id: medicine,
-                    quantity: quantity,
-                    amount: amount
+                    quantity: quantity
                 })
             })
                 .then(function (response) { return response.json().then(function (result) { return { response, result }; }); })
@@ -300,10 +305,12 @@ if (saveOrder) {
                         alert(data.result.message || "La commande n'a pas pu être enregistrée.");
                         return;
                     }
-                    window.location.reload();
+                    const message = "Commande enregistrée avec succès. Montant : " + data.result.amount + " Ar";
+                    if (window.showAppNotification) window.showAppNotification(message, "success");
+                    window.setTimeout(() => window.location.reload(), 900);
                 })
                 .catch(function () {
-                    alert("Impossible de contacter le serveur.");
+                    if (window.showAppNotification) window.showAppNotification("Impossible de contacter le serveur.", "error");
                 });
 
 

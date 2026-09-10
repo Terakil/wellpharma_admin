@@ -245,12 +245,60 @@ document.addEventListener("DOMContentLoaded", function () {
             button.addEventListener(
                 "click",
                 function () {
-
+                    const row = this.closest(".supplier-row");
                     const id = this.dataset.id;
+                    if (!row) return;
 
-                    alert(
-                        "Modification du fournisseur #" + id
-                    );
+                    const name = prompt("Nom du fournisseur :", row.dataset.displayName || row.dataset.name || "");
+                    if (name === null) return;
+                    const city = prompt("Ville :", row.dataset.city || "");
+                    if (city === null) return;
+                    const contact = prompt("Personne de contact :", row.dataset.contact || "");
+                    if (contact === null) return;
+                    const phone = prompt("Téléphone :", row.dataset.phone || "");
+                    if (phone === null) return;
+                    const medicines = prompt("Médicaments fournis :", row.dataset.medicines || "");
+                    if (medicines === null) return;
+                    const lastOrder = prompt("Dernière commande (AAAA-MM-JJ) :", row.dataset.lastOrder || "");
+                    if (lastOrder === null) return;
+                    const arrivalDate = prompt("Date d'arrivée (AAAA-MM-JJ) :", row.dataset.arrivalDate || "");
+                    if (arrivalDate === null) return;
+                    const delay = prompt("Délai de livraison :", row.dataset.delay || "0");
+                    if (delay === null) return;
+                    const amount = prompt("Montant :", row.dataset.amount || "0");
+                    if (amount === null) return;
+
+                    fetch("/fournisseurs/" + id + "/modifier", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            name,
+                            city,
+                            contact,
+                            phone,
+                            medicines,
+                            last_order: lastOrder,
+                            arrival_date: arrivalDate,
+                            delivery_delay: delay,
+                            amount
+                        })
+                    })
+                        .then(function (response) {
+                            return response.json().then(function (result) {
+                                return { response, result };
+                            });
+                        })
+                        .then(function (data) {
+                            if (!data.response.ok || !data.result.success) {
+                                if (window.showAppNotification) window.showAppNotification(data.result.message || "Modification impossible.", "error");
+                                return;
+                            }
+                            if (window.showAppNotification) window.showAppNotification(data.result.message, "success");
+                            window.setTimeout(() => window.location.reload(), 900);
+                        })
+                        .catch(function () {
+                            if (window.showAppNotification) window.showAppNotification("Impossible de contacter le serveur.", "error");
+                        });
 
                 }
             );
