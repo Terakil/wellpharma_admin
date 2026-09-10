@@ -236,15 +236,6 @@
             Filtrer
         </button>
 
-        <button
-            class="reset-btn"
-            id="resetReports"
-            type="button"
-        >
-            <i class="bi bi-arrow-clockwise"></i>
-            Réinitialiser
-        </button>
-
         {% if reports|length > 5 %}
         <button type="button" class="reset-btn list-toggle" data-list-target="reportTableBody" data-item-selector=".report-row">
             Voir tout →
@@ -328,6 +319,7 @@
                 class="report-row"
                 data-name="{{ report.name|lower }}"
                 data-type="{{ report.type|lower }}"
+                data-search="{{ (report.name ~ ' ' ~ report.type ~ ' ' ~ report.period)|lower }}"
             >
 
                 <td>

@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         rows.forEach(function (row) {
 
             const name =
-                row.dataset.name || "";
+                row.dataset.search || row.dataset.name || "";
 
             const rowCategory =
                 row.dataset.category || "";
@@ -332,60 +332,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 filterStocks();
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       RESET
-    ===================================================== */
-
-    const resetButton =
-        document.getElementById(
-            "resetFilters"
-        );
-
-
-    if (resetButton) {
-
-        resetButton.addEventListener(
-            "click",
-            function () {
-
-                if (searchInput) {
-                    searchInput.value = "";
-                }
-
-                if (categoryFilter) {
-                    categoryFilter.value = "";
-                }
-
-                if (statusFilter) {
-                    statusFilter.value = "";
-                }
-
-                if (sortFilter) {
-                    sortFilter.value = "";
-                }
-
-
-                rows.forEach(function (row) {
-
-                    row.style.display = "";
-
-                });
-
-
-                emptyStock.style.display =
-                    "none";
-
-
-                stockCount.textContent =
-                    rows.length +
-                    " produit(s)";
 
             }
         );

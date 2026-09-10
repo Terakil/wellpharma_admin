@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("supplierSearch");
     const statusFilter = document.getElementById("statusFilter");
     const sortFilter = document.getElementById("sortFilter");
-    const resetButton = document.getElementById("resetFilters");
 
     const tableBody = document.getElementById("supplierTableBody");
     const countElement = document.getElementById("supplierCount");
@@ -31,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         rows.forEach(function (row) {
 
-            const name = row.dataset.name || "";
+            const name = row.dataset.search || row.dataset.name || "";
             const rowStatus = row.dataset.status || "";
 
             const matchesSearch = name.includes(search);
@@ -179,24 +178,6 @@ document.addEventListener("DOMContentLoaded", function () {
     sortFilter.addEventListener(
         "change",
         sortSuppliers
-    );
-
-
-    /* =====================================================
-       REINITIALISER
-    ===================================================== */
-
-    resetButton.addEventListener(
-        "click",
-        function () {
-
-            searchInput.value = "";
-            statusFilter.value = "";
-            sortFilter.value = "";
-
-            filterSuppliers();
-
-        }
     );
 
 

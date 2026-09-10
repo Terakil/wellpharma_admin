@@ -1,10 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-```
 const searchInput = document.getElementById("orderSearch");
 const statusFilter = document.getElementById("statusFilter");
 const dateFilter = document.getElementById("dateFilter");
-const resetFilters = document.getElementById("resetFilters");
 const orderCount = document.getElementById("orderCount");
 const emptyOrder = document.getElementById("emptyOrder");
 
@@ -36,20 +34,30 @@ function filterOrders() {
 
     rows.forEach(function (row) {
 
-        const client = row.dataset.client || "";
+        const searchable = row.dataset.search || row.dataset.client || "";
         const rowStatus = row.dataset.status || "";
-        const rowDate = row.dataset.date || "";
+        const rowDate = row.dataset.dateKey || "";
 
         const matchSearch =
-            client.includes(search);
+            searchable.includes(search);
 
         const matchStatus =
             status === "" ||
             rowStatus === status;
 
-        const matchDate =
-            date === "" ||
-            rowDate === date;
+        const orderDate = rowDate ? new Date(`${rowDate}T00:00:00`) : null;
+        const today = new Date();
+        const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const startOfWeek = new Date(startOfToday);
+        startOfWeek.setDate(startOfToday.getDate() - startOfToday.getDay() + 1);
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const matchDate = !date || (
+            orderDate && (
+                (date === "today" && orderDate.getTime() === startOfToday.getTime()) ||
+                (date === "week" && orderDate >= startOfWeek && orderDate <= startOfToday) ||
+                (date === "month" && orderDate >= startOfMonth && orderDate <= startOfToday)
+            )
+        );
 
 
         if (
@@ -128,36 +136,6 @@ if (dateFilter) {
     dateFilter.addEventListener(
         "change",
         filterOrders
-    );
-
-}
-
-
-/* =====================================================
-   RÉINITIALISER
-===================================================== */
-
-if (resetFilters) {
-
-    resetFilters.addEventListener(
-        "click",
-        function () {
-
-            if (searchInput) {
-                searchInput.value = "";
-            }
-
-            if (statusFilter) {
-                statusFilter.value = "";
-            }
-
-            if (dateFilter) {
-                dateFilter.value = "";
-            }
-
-            filterOrders();
-
-        }
     );
 
 }
@@ -359,6 +337,5 @@ if (saveOrder) {
 ===================================================== */
 
 filterOrders();
-```
 
 });

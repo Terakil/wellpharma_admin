@@ -150,15 +150,6 @@ Commandes - WellPharma
         <span id="orderCount">{{ orders|length }} commande(s)</span>
     </div>
 
-    <button
-        type="button"
-        class="btn-view-all"
-        id="resetFilters"
-    >
-        <i class="bi bi-arrow-clockwise"></i>
-        Réinitialiser
-    </button>
-
     {% if orders|length > 5 %}
     <button type="button" class="btn-view-all list-toggle" data-list-target="orderTableBody" data-item-selector=".order-row">
         Voir tout →
@@ -194,6 +185,8 @@ Commandes - WellPharma
                 data-client="{{ order.client|lower }}"
                 data-status="{{ order.status|lower }}"
                 data-date="{{ order.date }}"
+                data-date-key="{{ order.date_key }}"
+                data-search="{{ (order.client ~ ' ' ~ order.medicaments ~ ' ' ~ order.id)|lower }}"
             >
                 <td>#{{ order.id }}</td>
                 <td><strong>{{ order.client }}</strong></td>

@@ -422,6 +422,12 @@ ALTER TABLE `stock_movements`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT pour la table `fournisseurs`
+--
+ALTER TABLE `fournisseurs`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT pour la table `suppliers`
 --
 ALTER TABLE `suppliers`

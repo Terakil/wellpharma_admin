@@ -10,6 +10,7 @@ from datetime import date, datetime
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.models import Fournisseur, db
+from sqlalchemy import func
 
 
 fournisseurs = Blueprint("fournisseurs", __name__)
@@ -123,6 +124,7 @@ def ajouter_fournisseur():
         return redirect(url_for("fournisseurs.liste_fournisseurs"))
 
     new_supplier = Fournisseur(
+        id=(db.session.query(func.max(Fournisseur.id)).scalar() or 0) + 1,
         nom=name[:50],
         ville=city[:50],
         personneContact=contact[:50],

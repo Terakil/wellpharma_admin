@@ -144,7 +144,7 @@ class Commande(db.Model):
 class Fournisseur(db.Model):
     __tablename__ = "fournisseurs"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nom = db.Column(db.String(50), nullable=False)
     ville = db.Column(db.String(50), nullable=False)
     personneContact = db.Column(db.String(50), nullable=False)

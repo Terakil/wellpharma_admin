@@ -10,7 +10,6 @@ const generateReportBtn = document.getElementById("generateReportBtn");
 
 const reportSearch = document.getElementById("reportSearch");
 const typeFilter = document.getElementById("typeFilter");
-const resetReports = document.getElementById("resetReports");
 
 const rows = document.querySelectorAll(".report-row");
 const emptyReports = document.getElementById("emptyReports");
@@ -44,7 +43,7 @@ function filterReports() {
 
     rows.forEach(function (row) {
 
-        const name = row.dataset.name || "";
+        const name = row.dataset.search || row.dataset.name || "";
         const rowType = row.dataset.type || "";
 
         const matchesSearch = name.includes(search);
@@ -75,20 +74,6 @@ function filterReports() {
 
 reportSearch.addEventListener("input", filterReports);
 typeFilter.addEventListener("change", filterReports);
-
-
-/* =====================================================
-   RESET
-===================================================== */
-
-resetReports.addEventListener("click", function () {
-
-    reportSearch.value = "";
-    typeFilter.value = "";
-
-    filterReports();
-
-});
 
 
 /* =====================================================

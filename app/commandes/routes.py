@@ -19,6 +19,7 @@ def liste_commandes():
             "id": order.id_commande,
             "client": order.acheteur or "Client",
             "date": order.date.strftime("%d/%m/%Y") if order.date else "-",
+            "date_key": order.date.strftime("%Y-%m-%d") if order.date else "",
             "medicaments": produit.designation if produit else "Produit inconnu",
             "quantite": order.quantite,
             "total": float(order.prix_total),

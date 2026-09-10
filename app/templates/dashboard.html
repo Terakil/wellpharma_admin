@@ -21,7 +21,7 @@
 
       <h2>{{ "{:,}".format(stats.revenue).replace(",", " ") }} Ar</h2>
 
-      <small>Aujourd'hui</small>
+      <small>Total des commandes</small>
     </div>
   </div>
 
@@ -251,50 +251,17 @@
     </div>
 
     <div class="top-medicaments-list">
+      {% for medicine in top_medicaments %}
       <div class="medicine-item">
-        <span class="rank">1</span>
-
+        <span class="rank">{{ loop.index }}</span>
         <div class="medicine-info">
-          <strong>Paracétamol</strong>
-          <small>145 ventes</small>
+          <strong>{{ medicine.name }}</strong>
+          <small>{{ medicine.sales }} ventes</small>
         </div>
       </div>
-
-      <div class="medicine-item">
-        <span class="rank">2</span>
-
-        <div class="medicine-info">
-          <strong>Amoxicilline</strong>
-          <small>120 ventes</small>
-        </div>
-      </div>
-
-      <div class="medicine-item">
-        <span class="rank">3</span>
-
-        <div class="medicine-info">
-          <strong>Ibuprofène</strong>
-          <small>98 ventes</small>
-        </div>
-      </div>
-
-      <div class="medicine-item">
-        <span class="rank">4</span>
-
-        <div class="medicine-info">
-          <strong>Doliprane</strong>
-          <small>87 ventes</small>
-        </div>
-      </div>
-
-      <div class="medicine-item">
-        <span class="rank">5</span>
-
-        <div class="medicine-info">
-          <strong>Vitamine C</strong>
-          <small>74 ventes</small>
-        </div>
-      </div>
+      {% else %}
+      <p class="empty-state">Aucune vente enregistrée.</p>
+      {% endfor %}
     </div>
   </div>
 
@@ -310,25 +277,12 @@
     </div>
 
     <ul>
+      {% for notification in notifications %}
       <li>
-        <span class="dot danger"></span>
-        <span>Rupture de stock</span>
+        <span class="dot {{ notification.type }}"></span>
+        <span>{{ notification.message }}</span>
       </li>
-
-      <li>
-        <span class="dot success"></span>
-        <span>Nouvelle commande</span>
-      </li>
-
-      <li>
-        <span class="dot warning"></span>
-        <span>Péremption</span>
-      </li>
-
-      <li>
-        <span class="dot low-stock"></span>
-        <span>Stock faible</span>
-      </li>
+      {% endfor %}
     </ul>
   </div>
 </div>
@@ -336,6 +290,9 @@
 {% endblock %} {% block js %}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  window.dashboardData = {{ {"sales": sales_chart, "stock": stock_data}|tojson }};
+</script>
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 {% endblock %}

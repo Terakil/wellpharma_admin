@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-```
 const searchInput = document.getElementById("clientSearch");
 const statusFilter = document.getElementById("statusFilter");
 const rows = Array.from(document.querySelectorAll(".client-row"));
@@ -234,6 +233,5 @@ if (viewAll) {
 ================================================= */
 
 filterClients();
-```
 
 });

@@ -30,6 +30,19 @@
 
 </div>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="supplier-feedback" role="status">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
 
 <button
     class="btn btn-success"
@@ -218,16 +231,6 @@
     </div>
 
 
-    <button
-        type="button"
-        id="resetFilters"
-        class="reset-btn">
-
-        <i class="bi bi-arrow-counterclockwise"></i>
-        Réinitialiser
-
-    </button>
-
     {% if suppliers|length > 5 %}
     <button type="button" class="reset-btn list-toggle" data-list-target="supplierTableBody" data-item-selector=".supplier-row">
         Voir tout →
@@ -277,6 +280,7 @@
             <tr
                 class="supplier-row"
                 data-name="{{ supplier.name|lower }}"
+                data-search="{{ (supplier.name ~ ' ' ~ supplier.city ~ ' ' ~ supplier.contact ~ ' ' ~ supplier.medicines|join(' '))|lower }}"
                 data-status="{{ supplier.status|lower }}"
                 data-arrival="{{ supplier.arrival_date }}"
                 data-delay="{{ supplier.delivery_delay }}">
@@ -677,8 +681,7 @@
                             type="text"
                             name="phone"
                             class="form-control"
-                            placeholder="Ex : 034 00 000 00"
-                            required>
+                            placeholder="Ex : 034 00 000 00">
 
                     </div>
 
@@ -715,8 +718,7 @@
                         <input
                             type="date"
                             name="last_order"
-                            class="form-control"
-                            required>
+                            class="form-control">
 
                     </div>
 
@@ -732,8 +734,7 @@
                         <input
                             type="date"
                             name="arrival_date"
-                            class="form-control"
-                            required>
+                            class="form-control">
 
                     </div>
 

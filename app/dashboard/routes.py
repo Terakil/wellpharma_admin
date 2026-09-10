@@ -1,8 +1,10 @@
-from datetime import date
+from collections import defaultdict
+from datetime import date, datetime, timedelta
 
 from flask import Blueprint, render_template, redirect, url_for, session
 
-from app.models import Commande, MouvementProduit, Produit, Utilisateur
+from app.models import Commande, MouvementProduit, Produit, Utilisateur, db
+from sqlalchemy import func
 
 
 dashboard = Blueprint(
@@ -21,6 +23,77 @@ def movement_kind(value):
     return "other"
 
 
+def period_bounds(period, today):
+    if period == "day":
+        return datetime.combine(today, datetime.min.time()), datetime.combine(today + timedelta(days=1), datetime.min.time())
+    if period == "week":
+        start = today - timedelta(days=today.weekday())
+        return datetime.combine(start, datetime.min.time()), datetime.combine(today + timedelta(days=1), datetime.min.time())
+    if period == "month":
+        start = today.replace(day=1)
+        return datetime.combine(start, datetime.min.time()), datetime.combine(today + timedelta(days=1), datetime.min.time())
+    return datetime(today.year, 1, 1), datetime(today.year + 1, 1, 1)
+
+
+def in_period(value, start, end):
+    return value is not None and start <= value < end
+
+
+def build_sales_chart(commandes, today):
+    chart = {}
+    for period in ("7", "30", "month"):
+        if period == "month":
+            start = today.replace(day=1)
+            days = (today - start).days + 1
+        else:
+            days = int(period)
+            start = today - timedelta(days=days - 1)
+        totals = defaultdict(float)
+        for commande in commandes:
+            if commande.date and start <= commande.date.date() <= today:
+                totals[commande.date.date()] += float(commande.prix_total or 0)
+        dates = [start + timedelta(days=index) for index in range(days)]
+        chart[period] = {
+            "labels": [current.strftime("%d/%m") for current in dates],
+            "values": [totals[current] for current in dates]
+        }
+
+    totals = defaultdict(float)
+    for commande in commandes:
+        if commande.date and commande.date.year == today.year:
+            totals[commande.date.month] += float(commande.prix_total or 0)
+    chart["year"] = {
+        "labels": [datetime(today.year, month, 1).strftime("%b") for month in range(1, 13)],
+        "values": [totals[month] for month in range(1, 13)]
+    }
+    return chart
+
+
+def build_stock_data(commandes, mouvements, produits, today):
+    stock_data = {}
+    for period in ("day", "week", "month", "year"):
+        start, end = period_bounds(period, today)
+        entries = sum(
+            mouvement.quantite for mouvement in mouvements
+            if movement_kind(mouvement.type) == "entry" and in_period(mouvement.date, start, end)
+        )
+        movement_exits = sum(
+            mouvement.quantite for mouvement in mouvements
+            if movement_kind(mouvement.type) == "exit" and in_period(mouvement.date, start, end)
+        )
+        order_exits = sum(
+            commande.quantite for commande in commandes
+            if in_period(commande.date, start, end)
+        )
+        stock_data[period] = {
+            "entries": entries,
+            "exits": movement_exits + order_exits,
+            "ruptures": sum(1 for produit in produits if produit.quantite == 0),
+            "expiration": 0
+        }
+    return stock_data
+
+
 @dashboard.route("/")
 def home():
     if not session.get("admin_logged_in"):
@@ -32,17 +105,15 @@ def home():
     mouvements = MouvementProduit.query.all()
     today = date.today()
 
-    revenue_today = sum(
-        float(commande.prix_total or 0)
-        for commande in commandes
-        if commande.date and commande.date.date() == today
-    )
+    revenue_total = db.session.query(
+        func.coalesce(func.sum(Commande.prix_total), 0)
+    ).scalar()
     total_stock = sum(produit.quantite for produit in produits)
     out_of_stock = sum(1 for produit in produits if produit.quantite == 0)
     clients = Utilisateur.query.filter(Utilisateur.role != "admin").count()
 
     stats = {
-        "revenue": int(revenue_today),
+        "revenue": int(round(float(revenue_total or 0))),
         "stock": total_stock,
         "clients": clients,
         "orders": sum(1 for commande in commandes if commande.date and commande.date.date() == today),
@@ -50,13 +121,19 @@ def home():
     }
 
     notifications = [
-        f"{produit.designation} : {produit.quantite} unités restantes"
+        {
+            "type": "danger" if produit.quantite == 0 else "low-stock",
+            "message": f"{produit.designation} : {produit.quantite} unités restantes"
+        }
         for produit in produits
         if produit.quantite <= 10
     ][:3]
 
     if not notifications:
-        notifications = ["Stock général satisfaisant pour le moment."]
+        notifications = [{
+            "type": "success",
+            "message": "Stock général satisfaisant pour le moment."
+        }]
 
     recent_orders = []
     for commande in commandes_recentes:
@@ -77,7 +154,16 @@ def home():
         movement.quantite for movement in mouvements
         if movement_kind(movement.type) == "exit"
     ) + sum(commande.quantite for commande in commandes)
-    expiration_alerts = sum(1 for produit in produits if produit.quantite <= 10)
+    expiration_alerts = 0
+
+    top_sales = defaultdict(int)
+    for commande in commandes:
+        if commande.produit:
+            top_sales[commande.produit.designation] += commande.quantite
+    top_medicaments = [
+        {"name": name, "sales": sales}
+        for name, sales in sorted(top_sales.items(), key=lambda item: item[1], reverse=True)[:5]
+    ]
 
     return render_template(
         "dashboard.html",
@@ -86,5 +172,8 @@ def home():
         recent_orders=recent_orders,
         stock_entries=stock_entries,
         stock_exits=stock_exits,
-        expiration_alerts=expiration_alerts
+        expiration_alerts=expiration_alerts,
+        sales_chart=build_sales_chart(commandes, today),
+        stock_data=build_stock_data(commandes, mouvements, produits, today),
+        top_medicaments=top_medicaments
     )

@@ -321,17 +321,6 @@ Stocks - WellPharma
 
         </div>
 
-        <button
-            class="view-all-btn"
-            id="resetFilters"
-            type="button"
-        >
-
-            <i class="bi bi-arrow-clockwise"></i>
-            Réinitialiser
-
-        </button>
-
     </div>
 
 
@@ -471,6 +460,7 @@ Stocks - WellPharma
                     class="stock-row"
                     data-id="{{ stock.id }}"
                     data-name="{{ stock.name|lower }}"
+                    data-search="{{ (stock.name ~ ' ' ~ stock.reference ~ ' ' ~ stock.category)|lower }}"
                     data-category="{{ stock.category|lower }}"
                     data-status="{{ stock.status|lower }}"
                     data-quantity="{{ stock.quantity }}"
