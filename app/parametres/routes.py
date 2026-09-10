@@ -6,6 +6,16 @@ import json
 parametres = Blueprint("parametres", __name__)
 
 
+def load_settings():
+    settings = {}
+    for item in Parametre.query.all():
+        try:
+            settings[item.cle] = json.loads(item.valeur)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            settings[item.cle] = {}
+    return settings
+
+
 @parametres.route("/parametres", methods=["GET", "POST"])
 def page_parametres():
 
@@ -45,7 +55,7 @@ def page_parametres():
     return render_template(
         "parametres.html",
         profil=profil,
-        settings={item.cle: json.loads(item.valeur) for item in Parametre.query.all()}
+        settings=load_settings()
     )
 
 
@@ -61,6 +71,10 @@ def enregistrer_parametres():
     if setting is None:
         setting = Parametre(cle=section)
         db.session.add(setting)
-    setting.valeur = json.dumps(values, ensure_ascii=False)
-    db.session.commit()
+    try:
+        setting.valeur = json.dumps(values, ensure_ascii=False)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return jsonify({"success": False, "message": "Les paramètres n'ont pas pu être enregistrés."}), 500
     return jsonify({"success": True, "message": "Paramètres enregistrés avec succès."})

@@ -111,10 +111,17 @@ def home():
     today = date.today()
     settings = {item.cle: json.loads(item.valeur) for item in Parametre.query.all()}
     management_settings = settings.get("management", {})
+    notification_settings = settings.get("notifications", {})
+    try:
+        low_stock_threshold = max(0, int(management_settings.get("lowStockThreshold", 10)))
+    except (TypeError, ValueError):
+        low_stock_threshold = 10
     try:
         expiration_threshold = max(0, int(management_settings.get("expirationThreshold", 30)))
     except (TypeError, ValueError):
         expiration_threshold = 30
+    notify_low_stock = notification_settings.get("notifyLowStock", True)
+    notify_expiration = notification_settings.get("notifyExpiration", True)
 
     revenue_total = db.session.query(
         func.coalesce(func.sum(Commande.prix_total), 0)
@@ -134,6 +141,8 @@ def home():
     expiration_notifications = []
     expiration_limit = today + timedelta(days=expiration_threshold)
     for produit in produits:
+        if not notify_expiration:
+            continue
         if not produit.date_peremption or produit.date_peremption > expiration_limit:
             continue
         if produit.date_peremption < today:
@@ -154,7 +163,7 @@ def home():
             "message": f"{produit.designation} : {produit.quantite} unités restantes"
         }
         for produit in produits
-        if produit.quantite <= 10
+        if notify_low_stock and produit.quantite <= low_stock_threshold
     ]
     notifications = (expiration_notifications + stock_notifications)[:3]
 
@@ -185,7 +194,7 @@ def home():
     ) + sum(commande.quantite for commande in commandes)
     expiration_alerts = sum(
         1 for produit in produits
-        if produit.date_peremption and produit.date_peremption <= expiration_limit
+        if notify_expiration and produit.date_peremption and produit.date_peremption <= expiration_limit
     )
 
     top_sales = defaultdict(int)

@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
+from datetime import date
+import json
 
 from flask import Blueprint, jsonify, render_template, request
 
-from app.models import Commande, MouvementProduit, Produit, db
+from app.models import Commande, MouvementProduit, Parametre, Produit, db
 
 
 stocks = Blueprint("stocks", __name__)
@@ -47,7 +49,22 @@ def liste_stocks():
         if movement_kind(movement.type) == "exit"
     )
     total_exits = manual_exits + sum(order.quantite for order in orders)
-    total_alerts = sum(1 for medicine in medicines if medicine.quantite <= 10)
+    settings = {}
+    for item in Parametre.query.filter_by(cle="management").all():
+        try:
+            settings = json.loads(item.valeur)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            settings = {}
+    try:
+        low_stock_threshold = max(0, int(settings.get("lowStockThreshold", 10)))
+    except (TypeError, ValueError):
+        low_stock_threshold = 10
+    try:
+        expiration_threshold = max(0, int(settings.get("expirationThreshold", 30)))
+    except (TypeError, ValueError):
+        expiration_threshold = 30
+
+    total_alerts = sum(1 for medicine in medicines if medicine.quantite <= low_stock_threshold)
 
     stocks_data = [{
         "id": medicine.id_produit,
@@ -68,12 +85,19 @@ def liste_stocks():
                 "type": "Rupture",
                 "message": "Produit indisponible"
             })
-        elif medicine.quantite <= 10:
+        elif medicine.quantite <= low_stock_threshold:
             alerts.append({
                 "icon": "bi-exclamation-triangle",
                 "medicine": medicine.designation,
                 "type": "Stock faible",
                 "message": f"{medicine.quantite} unités restantes"
+            })
+        if medicine.date_peremption and medicine.date_peremption <= date.today() + timedelta(days=expiration_threshold):
+            alerts.append({
+                "icon": "bi-calendar-x",
+                "medicine": medicine.designation,
+                "type": "Péremption",
+                "message": "Produit périmé" if medicine.date_peremption < date.today() else "Expiration proche"
             })
 
     recent_movements = []
